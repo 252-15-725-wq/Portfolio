@@ -3,60 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maruf Hasan | Hacker Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <title>S. M. Maruf Hasan | Security Researcher</title>
+    <style>
+        /* Base Terminal Styling */
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: #00ff9f;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
+        /* Scanline CRT Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #matrix {
+            position: fixed;
+            top: 0; left: 0; z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .terminal-window {
+            border: 1px solid #333;
+            background: rgba(5, 5, 5, 0.9);
+            box-shadow: 0 0 15px rgba(0, 255, 159, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Window Top Bar */
+        .window-header {
+            background: #1a1a1a;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            border-bottom: 1px solid #333;
+            color: #888;
+        }
+
+        .window-content {
+            padding: 15px;
+            line-height: 1.5;
+        }
+
+        /* Branding / Header */
+        header {
+            padding: 40px 20px 10px 20px;
+            text-align: center;
+        }
+
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; }
+        .glitch { position: relative; color: #00ff9f; }
+
+        /* Custom UI Elements */
+        .status-bar {
+            background: #00ff9f;
+            color: #000;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .cmd { color: #ff0055; margin-right: 5px; }
+        .path { color: #00aaff; }
+
+        pre { margin: 0; white-space: pre-wrap; font-size: 13px; }
+
+        /* Animations */
+        .cursor { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
 <body>
 
 <canvas id="matrix"></canvas>
 
-<div class="container">
+<header>
+    <h1 class="glitch">S M MARUF HASAN</h1>
+    <p>> <span id="typing"></span><span class="cursor">█</span></p>
+</header>
 
-    <div class="terminal-box">
-        <p>> initializing system...</p>
-        <p>> access granted</p>
+<div class="dashboard">
 
-        <h1>S M Maruf Hasan</h1>
-        <h3>Cybersecurity | Reverse Engineering</h3>
-
-        <p>> status:</p>
-        <span id="typing"></span><span class="cursor">█</span>
+    <!-- About Window -->
+    <div class="terminal-window">
+        <div class="window-header"><span>whoami.exe</span><span>✕ ▭ </span></div>
+        <div class="window-content">
+            <div class="status-bar">RANK: 1st Runner Up (CSAD CTF)</div>
+            <p>Computer Science student at DIU. Passionate about Red Teaming, Web Exploitation, and Hardware Internals.</p>
+            <p><span class="cmd">#</span> current_focus: OSCP Preparation</p>
+        </div>
     </div>
 
-    <div class="terminal-box">
-        <h2>> about_me</h2>
-        <p>
-            CSE student focused on cybersecurity, reverse engineering, and CTF competitions.
-            Exploring binaries, memory, and system internals.
-        </p>
+    <!-- Skills Window -->
+    <div class="terminal-window">
+        <div class="window-header"><span>system_info --skills</span><span>✕ ▭ </span></div>
+        <div class="window-content">
+            <pre>
+[OS]      Kali Linux, Parrot
+[TOOLS]   Nmap, Burp Suite, Metasploit
+[LANGS]   C, Python, Assembly
+[FIELDS]  Reverse Engineering, Blockchain
+            </pre>
+        </div>
     </div>
 
-    <div class="terminal-box">
-        <h2>> skills</h2>
-        <p>Linux | Nmap | Burp Suite | Networking | Cryptography</p>
+    <!-- Projects Window -->
+    <div class="terminal-window">
+        <div class="window-header"><span>ls -la /home/projects</span><span>✕ ▭ </span></div>
+        <div class="window-content">
+            <p><span class="path">drwxr-xr-x</span> <span class="cmd">SHUROKKHA</span> (Blockchain Safety)</p>
+            <p><span class="path">drwxr-xr-x</span> Visual_Aid_System</p>
+            <p><span class="path">-rw-r--r--</span> Student_Manager.py</p>
+        </div>
     </div>
 
-    <div class="terminal-box">
-        <h2>> projects</h2>
-        <p>Friends for the Visually Impaired → [coming soon]</p>
-        <p>Student Management System → [coming soon]</p>
+    <!-- Live System Window -->
+    <div class="terminal-window">
+        <div class="window-header"><span>system_monitor</span><span>✕ ▭ </span></div>
+        <div class="window-content">
+            <p id="stats">CPU: 0.0% | RAM: 1024MB / 16384MB</p>
+            <p>Connection: <span style="color: #00ff9f;">SECURE</span></p>
+            <p>Location: Dhaka, BD</p>
+        </div>
     </div>
 
-    <div class="terminal-box">
-        <h2>> reverse_engineering</h2>
-        <p>Learning assembly, binary analysis, debugging.</p>
-    </div>
-
-    <div class="terminal-box">
-        <h2>> contact</h2>
-        <p>Email: sardermarufhasan@gmail.com</p>
-        <p>GitHub: github.com/252-15-725-wq</p>
+    <!-- Contact Window -->
+    <div class="terminal-window" style="grid-column: span 1;">
+        <div class="window-header"><span>connect.sh</span><span>✕ ▭ </span></div>
+        <div class="window-content">
+            <p>> GitHub: <a href="https://github.com/252-15-725-wq" style="color:white; text-decoration: none;">/252-15-725-wq</a></p>
+            <p>> Email: <span style="color:white;">sardermarufhasan@gmail.com</span></p>
+        </div>
     </div>
 
 </div>
 
-<script src="script.js"></script>
+<script>
+    // Typing Effect
+    const text = "Cybersecurity Researcher | Reverse Engineer | CTF Player";
+    let i = 0;
+    function typing() {
+        if (i < text.length) {
+            document.getElementById("typing").innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, 60);
+        }
+    }
+    typing();
+
+    // Matrix Rain
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = "0101100101ABCDEF";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00ff9f";
+        ctx.font = fontSize + "px monospace";
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(draw, 35);
+
+    // Live Stats Simulation
+    function updateStats() {
+        const cpu = (Math.random() * 10 + 2).toFixed(1);
+        const ram = (Math.random() * 100 + 2048).toFixed(0);
+        document.getElementById("stats").innerHTML = `CPU: ${cpu}% | RAM: ${ram}MB / 16384MB`;
+    }
+    setInterval(updateStats, 3000);
+</script>
 
 </body>
 </html>
