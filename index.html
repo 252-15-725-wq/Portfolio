@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S. M. Maruf Hasan | Tactical Operator</title>
-    <!-- Sharp, technical fonts -->
+    <!-- Sharp HUD Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #d90429; /* Blood Red */
-            --primary-dim: rgba(217, 4, 41, 0.2);
-            --bg: #020202;
-            --surface: rgba(10, 10, 12, 0.75);
+            --primary-glow: rgba(217, 4, 41, 0.5);
+            --bg: #030303;
+            --surface: rgba(12, 12, 14, 0.6);
             --text-main: #f8f9fa;
             --text-muted: #6c757d;
             --border: #2b2b2b;
@@ -27,147 +27,133 @@
             font-family: 'Fira Code', monospace;
             overflow-x: hidden;
             scroll-behavior: smooth;
-            cursor: crosshair; /* Tactical cursor */
+            cursor: none; /* Hide default cursor for custom reticle */
         }
 
-        /* Tactical Grid Background */
-        .grid-bg {
+        /* Custom Tactical Cursor */
+        .cursor-reticle {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(var(--primary-dim) 1px, transparent 1px),
-                linear-gradient(90deg, var(--primary-dim) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center center;
-            z-index: -2;
-            opacity: 0.3;
+            width: 40px; height: 40px;
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10000;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            box-shadow: 0 0 10px var(--primary-glow), inset 0 0 10px var(--primary-glow);
         }
-
-        /* Sweeping Radar Line */
-        .radar-sweep {
+        .cursor-dot {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 10px;
+            width: 4px; height: 4px;
             background: var(--primary);
-            box-shadow: 0 0 20px 5px var(--primary);
-            z-index: -1;
-            opacity: 0.15;
-            animation: sweep 8s linear infinite;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10000;
         }
 
-        @keyframes sweep {
-            0% { top: -10px; }
-            100% { top: 100vh; }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--primary); }
 
-        /* Typography */
-        h1, h2, h3, .hud-title { 
-            font-family: 'Share Tech Mono', monospace; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            margin: 0;
+        /* Background Systems */
+        body::before {
+            content: " "; display: block; position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(217, 4, 41, 0.03) 50%, rgba(0, 0, 0, 0.1) 50%);
+            z-index: 1000; background-size: 100% 4px; pointer-events: none;
         }
+        #network-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.4; }
 
         /* Boot Screen */
         #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: var(--primary);
             z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
         }
-        .boot-logo { font-size: 3rem; margin-bottom: 20px; letter-spacing: 10px; }
-        .boot-bar { width: 300px; height: 2px; background: #222; margin-top: 20px; position: relative; }
-        .boot-progress { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 10px var(--primary); }
+        .boot-logo { font-size: 3.5rem; margin-bottom: 20px; letter-spacing: 12px; font-family: 'Share Tech Mono'; text-shadow: 0 0 15px var(--primary); }
+        .boot-bar { width: 400px; height: 2px; background: #222; margin-top: 20px; }
+        .boot-progress { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 15px var(--primary); }
 
-        #main-content { display: none; opacity: 0; transition: opacity 1s; }
+        #main-content { display: none; opacity: 0; transition: opacity 1.5s; }
+        .container { max-width: 1100px; margin: auto; padding: 60px 20px; }
 
-        .container {
-            max-width: 1100px; margin: auto; padding: 60px 20px;
-        }
+        /* Typography */
+        h1, h2, h3, .hud-title { font-family: 'Share Tech Mono', monospace; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .decrypt-text { display: inline-block; }
 
-        .section {
-            margin-bottom: 80px; opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out;
-        }
+        .section { margin-bottom: 100px; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.1, 1, 0.3, 1); }
         .section.visible { opacity: 1; transform: translateY(0); }
 
-        /* Headers */
-        .header-box {
-            border-left: 4px solid var(--primary);
-            padding-left: 20px;
-            margin-bottom: 40px;
-        }
-        .header-title { font-size: 3rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .header-sub { color: var(--primary); font-size: 1.2rem; margin-top: 10px; }
+        /* Header Area */
+        .header-box { border-left: 4px solid var(--primary); padding-left: 25px; margin-bottom: 40px; }
+        .header-title { font-size: 4rem; color: #fff; text-shadow: 0 0 15px rgba(217, 4, 41, 0.4); letter-spacing: 5px; }
+        .header-sub { color: var(--primary); font-size: 1.2rem; margin-top: 10px; letter-spacing: 3px; }
 
-        /* Tactical Data Grid (ID Cards) */
-        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .objective-block {
+            border-left: 2px solid #444; background: rgba(255,255,255,0.02); padding: 20px 25px;
+            color: #aaa; font-size: 1.1rem; line-height: 1.7; margin-bottom: 50px;
+        }
+
+        /* 3D Data Grid */
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px; perspective: 1000px; }
         
         .data-card {
             background: var(--surface);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
             border: 1px solid var(--border);
-            padding: 20px;
+            padding: 30px;
             display: flex; flex-direction: column;
             position: relative;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d; /* Required for 3D tilt */
+            will-change: transform;
         }
         
-        .data-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 10px;
-            border-top: 2px solid var(--primary); border-left: 2px solid var(--primary);
-        }
-        .data-card::after {
-            content: ''; position: absolute; bottom: 0; right: 0; width: 10px; height: 10px;
-            border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary);
-        }
+        .data-card::before { content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 15px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
+        .data-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
 
-        .data-card:hover { border-color: #444; box-shadow: 0 5px 20px rgba(0,0,0,0.5); transform: translateY(-3px); }
+        .data-card:hover { border-color: #555; box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 20px rgba(217, 4, 41, 0.2); }
         
-        .label { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px; }
-        .value { color: #fff; font-size: 1.3rem; font-weight: 700; }
-        .sub-value { color: var(--primary); font-size: 0.85rem; margin-top: 5px; }
-
-        /* Content Blocks */
-        .content-block {
-            background: var(--surface);
-            border-top: 2px solid var(--primary);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        .content-title { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+        /* Inner elements need translation to pop out in 3D */
+        .data-card > * { transform: translateZ(30px); }
         
-        /* Lists & Links */
-        ul { padding-left: 0; list-style: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
-        li { margin-bottom: 10px; display: flex; align-items: flex-start; }
-        li::before { content: "[]"; color: var(--primary); margin-right: 10px; font-family: 'Share Tech Mono'; }
-        
-        a { color: var(--text-main); text-decoration: none; border-bottom: 1px solid var(--primary); padding-bottom: 2px; transition: 0.3s; }
-        a:hover { color: var(--primary); background: var(--primary-dim); }
+        .label { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 1px; }
+        .value { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+        .sub-value { color: var(--primary); font-size: 0.9rem; }
 
         /* Segment Header */
-        .segment-header { font-size: 1.5rem; color: #fff; margin: 60px 0 30px 0; display: flex; align-items: center; }
+        .segment-header { font-size: 1.8rem; color: #fff; margin: 80px 0 40px 0; display: flex; align-items: center; }
         .segment-header::before { content: "///"; color: var(--primary); margin-right: 15px; letter-spacing: 2px; }
+        .segment-header::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin-left: 20px; }
+
+        /* Lists & Links */
+        ul { padding-left: 0; list-style: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-top: 15px;}
+        li { margin-bottom: 12px; display: flex; align-items: flex-start; }
+        li::before { content: "[]"; color: var(--primary); margin-right: 12px; font-family: 'Share Tech Mono'; }
+        
+        a { color: var(--text-main); text-decoration: none; border-bottom: 1px solid var(--primary); padding-bottom: 2px; transition: 0.3s; }
+        a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
 
     </style>
 </head>
 <body>
 
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-reticle" id="cursor-reticle"></div>
+
 <!-- Boot Screen -->
 <div id="boot-screen">
-    <div class="hud-title boot-logo">SECURE_TERMINAL</div>
-    <div style="font-family: 'Fira Code'; color: #666; font-size: 0.8rem;" id="boot-status">INITIALIZING...</div>
-    <div class="boot-bar">
-        <div class="boot-progress" id="boot-progress"></div>
-    </div>
+    <div class="hud-title boot-logo">TACTICAL_SYS_V2</div>
+    <div style="font-family: 'Fira Code'; color: #666; font-size: 0.85rem;" id="boot-status">ESTABLISHING CONNECTION...</div>
+    <div class="boot-bar"><div class="boot-progress" id="boot-progress"></div></div>
 </div>
 
-<!-- Background Elements -->
-<div class="grid-bg"></div>
-<div class="radar-sweep"></div>
+<!-- Interactive Network Canvas -->
+<canvas id="network-canvas"></canvas>
 
 <!-- Main Content -->
 <div id="main-content">
@@ -176,29 +162,28 @@
         <!-- HEADER -->
         <div class="section visible">
             <div class="header-box">
-                <div class="header-title">S M MARUF HASAN</div>
-                <div class="header-sub">OPERATOR // RED TEAM // REVERSE ENGINEER</div>
+                <div class="header-title decrypt-text" data-target="S M MARUF HASAN">S M MARUF HASAN</div>
+                <div class="header-sub decrypt-text" data-target="OPERATOR // RED TEAM // REVERSE ENGINEER">OPERATOR // RED TEAM // REVERSE ENGINEER</div>
             </div>
 
-            <div class="content-block" style="border-top: none; border-left: 2px solid #444; background: transparent; padding: 15px 20px;">
-                <p style="margin:0; color:#aaa; font-size:1.1rem; line-height:1.6;">
-                    Building a strong foundation in Ethical Hacking, Penetration Testing, and Binary Analysis. Currently focused on understanding system internals to approach security from an offensive perspective.
-                </p>
+            <div class="objective-block">
+                > Building a strong foundation in Ethical Hacking, Penetration Testing, and Binary Analysis.<br>
+                > Currently focused on understanding system internals to approach security from an offensive perspective.
             </div>
             
             <div class="data-grid">
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">COMMAND RANK</span>
                     <span class="value">LEAD EXECUTIVE</span>
                     <span class="sub-value">DIU Cyber Security Club</span>
                 </div>
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">AFFILIATION</span>
                     <span class="value">B.Sc. CSE STUDENT</span>
                     <span class="sub-value">Daffodil International University</span>
                 </div>
-                <div class="data-card">
-                    <span class="label">LOCATION / COMM</span>
+                <div class="data-card tilt-card">
+                    <span class="label">SECURE COMM</span>
                     <span class="value">DHAKA, BD</span>
                     <span class="sub-value"><a href="mailto:sardermarufhasan@gmail.com" style="border:none;">sardermarufhasan@gmail.com</a></span>
                 </div>
@@ -207,21 +192,21 @@
 
         <!-- ACADEMICS & TRAINING -->
         <div class="section">
-            <div class="segment-header">ACADEMIC_RECON</div>
+            <div class="segment-header decrypt-text" data-target="ACADEMIC_RECON">ACADEMIC_RECON</div>
             <div class="data-grid">
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">DEGREE PROGRAM</span>
                     <span class="value">B.Sc. Computer Science</span>
-                    <p style="color:#888; font-size:0.9rem; margin:10px 0 0 0;">Daffodil International University. Focusing on core concepts and information security. Expected: 2029.</p>
+                    <p style="color:#888; font-size:0.9rem; margin:15px 0 0 0;">Daffodil International University. Core focus on information security algorithms. Expected: 2029.</p>
                 </div>
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">FOUNDATIONAL TRAINING</span>
-                    <span class="value">Cybersecurity Fundamentals</span>
+                    <span class="value">Cybersecurity Basics</span>
                     <span class="sub-value">Hack To Live Academy</span>
-                    <ul style="margin-top:10px; font-size:0.85rem;">
+                    <ul>
                         <li>Network Enumeration & Nmap</li>
-                        <li>Web Exploitation Basics</li>
-                        <li>OSI/TCP-IP Models</li>
+                        <li>Web Exploitation Fundamentals</li>
+                        <li>OSI/TCP-IP Architecture</li>
                     </ul>
                 </div>
             </div>
@@ -229,30 +214,30 @@
 
         <!-- CERTIFICATIONS -->
         <div class="section">
-            <div class="segment-header">CERTIFICATION_LOG</div>
+            <div class="segment-header decrypt-text" data-target="CERTIFICATION_LOG">CERTIFICATION_LOG</div>
             <div class="data-grid">
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">TCM SECURITY</span>
                     <span class="value">Systems & Code</span>
-                    <ul style="margin-top:10px;">
+                    <ul>
                         <li>Linux 100: Fundamentals</li>
                         <li>Programming 100: Fundamentals</li>
                     </ul>
                 </div>
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">INFRASTRUCTURE</span>
                     <span class="value">Networking & Scripts</span>
-                    <ul style="margin-top:10px;">
+                    <ul>
                         <li>Intro to Cybersecurity (Cisco)</li>
                         <li>PowerShell Regex (Udemy)</li>
                     </ul>
                 </div>
-                <div class="data-card">
+                <div class="data-card tilt-card">
                     <span class="label">PROFESSIONAL GROWTH</span>
                     <span class="value">Leadership & AI</span>
-                    <ul style="margin-top:10px;">
+                    <ul>
                         <li>Campus to Success (LDA)</li>
-                        <li>MS 365 Copilot Prompts (Microsoft)</li>
+                        <li>MS Copilot Prompts (Microsoft)</li>
                     </ul>
                 </div>
             </div>
@@ -260,24 +245,24 @@
 
         <!-- REVERSE ENGINEERING -->
         <div class="section">
-            <div class="segment-header">MODULE: REVERSE_ENGINEERING</div>
-            <div class="content-block">
-                <p style="color:#ccc; font-size:1.05rem; margin-top:0;">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level. This is a critical step in my journey toward advanced Red Teaming.</p>
+            <div class="segment-header decrypt-text" data-target="MODULE: REVERSE_ENGINEERING">MODULE: REVERSE_ENGINEERING</div>
+            <div class="data-card tilt-card" style="width: 100%; border-left: 4px solid var(--primary);">
+                <p style="color:#ccc; font-size:1.1rem; margin-top:0; line-height:1.7; transform: translateZ(30px);">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level. This is a critical step toward advanced Red Teaming.</p>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 30px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 20px; transform: translateZ(40px);">
                     <div style="flex: 1; min-width: 250px;">
-                        <h3 style="color:var(--primary); font-size:1.1rem;">CURRENT FOCUS</h3>
+                        <h3 style="color:var(--primary); font-size:1.2rem;">CURRENT FOCUS</h3>
                         <ul>
                             <li>Reading x86/x64 Assembly</li>
                             <li>Hands-on with Debuggers (GDB)</li>
-                            <li>Understanding Memory Constraints</li>
+                            <li>Memory Constraints & Overflows</li>
                         </ul>
                     </div>
                     <div style="flex: 1; min-width: 250px;">
-                        <h3 style="color:var(--primary); font-size:1.1rem;">FAMILIAR ARSENAL</h3>
+                        <h3 style="color:var(--primary); font-size:1.2rem;">FAMILIAR ARSENAL</h3>
                         <ul>
                             <li>Ghidra / Radare2</li>
-                            <li>Metasploit & Nmap</li>
+                            <li>Metasploit Framework</li>
                             <li>Burp Suite</li>
                         </ul>
                     </div>
@@ -287,47 +272,49 @@
 
         <!-- OPERATIONS LOG -->
         <div class="section">
-            <div class="segment-header">OPERATIONS_LOG</div>
+            <div class="segment-header decrypt-text" data-target="OPERATIONS_LOG">OPERATIONS_LOG</div>
             
-            <div class="content-block">
-                <div class="content-title">
-                    <h3 style="color:#fff; margin:0;">Lead Executive</h3>
-                    <span style="color:var(--text-muted); font-family:'Share Tech Mono';">PRESENT</span>
+            <div class="data-grid" style="grid-template-columns: 1fr;">
+                <div class="data-card tilt-card" style="padding: 25px 40px;">
+                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
+                        <span class="value">Lead Executive</span>
+                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">PRESENT</span>
+                    </div>
+                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cyber Security Club</span>
+                    <ul style="transform:translateZ(30px);">
+                        <li>Assisting in organizing CTF training and security awareness workshops.</li>
+                        <li>Collaborating to promote cybersecurity education on campus.</li>
+                    </ul>
                 </div>
-                <span style="color:var(--primary); font-weight:bold; display:block; margin-bottom:15px;">DIU Cyber Security Club</span>
-                <ul>
-                    <li>Assisting in organizing CTF training and security awareness workshops.</li>
-                    <li>Collaborating to promote cybersecurity education on campus.</li>
-                </ul>
-            </div>
 
-            <div class="content-block">
-                <div class="content-title">
-                    <h3 style="color:#fff; margin:0;">Volunteer Recognition</h3>
-                    <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2025</span>
+                <div class="data-card tilt-card" style="padding: 25px 40px;">
+                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
+                        <span class="value">Volunteer Recognition</span>
+                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2025</span>
+                    </div>
+                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cybercon</span>
+                    <p style="color:#aaa; margin:0; transform:translateZ(30px);">Officially recognized with a Certificate of Appreciation for providing logistical and technical session support for the National Capture The Flag and cyber conference.</p>
                 </div>
-                <span style="color:var(--primary); font-weight:bold; display:block; margin-bottom:15px;">DIU Cybercon</span>
-                <p style="color:#aaa; margin:0;">Officially recognized with a Certificate of Appreciation for providing logistical and technical session support for the National Capture The Flag and cyber conference.</p>
-            </div>
 
-            <div class="content-block">
-                <div class="content-title">
-                    <h3 style="color:#fff; margin:0;">1st Runner-Up</h3>
-                    <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2024-2025</span>
+                <div class="data-card tilt-card" style="padding: 25px 40px;">
+                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
+                        <span class="value">1st Runner-Up</span>
+                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2024-2025</span>
+                    </div>
+                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">Cyber Security Awareness CTF</span>
+                    <p style="color:#aaa; margin:0; transform:translateZ(30px);">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
                 </div>
-                <span style="color:var(--primary); font-weight:bold; display:block; margin-bottom:15px;">Cyber Security Awareness CTF</span>
-                <p style="color:#aaa; margin:0;">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
             </div>
         </div>
 
         <!-- FOOTER LINKS -->
         <div class="section" style="text-align: center; margin-bottom: 0; padding-bottom: 40px;">
             <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;">
-                <a href="https://github.com/252-15-725-wq" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.5rem;">[ GITHUB ]</a>
-                <a href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.5rem;">[ LINKEDIN ]</a>
+                <a href="https://github.com/252-15-725-wq" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.8rem; letter-spacing: 2px;">[ GITHUB ]</a>
+                <a href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.8rem; letter-spacing: 2px;">[ LINKEDIN ]</a>
             </div>
-            <p style="color:#444; font-family:'Share Tech Mono'; letter-spacing:3px; font-size:0.8rem;">
-                ID: 252-15-725 // SYSTEM: SECURE
+            <p style="color:#555; font-family:'Share Tech Mono'; letter-spacing:4px; font-size:0.9rem;">
+                OPERATOR ID: 252-15-725 // UPLINK SECURE
             </p>
         </div>
 
@@ -335,19 +322,176 @@
 </div>
 
 <script>
-    // Minimalist Boot Sequence
+    // --- 1. TACTICAL MOUSE CURSOR ---
+    const dot = document.getElementById('cursor-dot');
+    const reticle = document.getElementById('cursor-reticle');
+    
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let reticleX = mouseX;
+    let reticleY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+    });
+
+    // Smooth trailing animation for the reticle
+    function animateCursor() {
+        let dx = mouseX - reticleX;
+        let dy = mouseY - reticleY;
+        reticleX += dx * 0.15; // Speed of trailing
+        reticleY += dy * 0.15;
+        reticle.style.left = reticleX + 'px';
+        reticle.style.top = reticleY + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Hover effect for links and cards
+    document.querySelectorAll('a, .data-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            reticle.style.width = '60px';
+            reticle.style.height = '60px';
+            reticle.style.background = 'rgba(217, 4, 41, 0.1)';
+        });
+        el.addEventListener('mouseleave', () => {
+            reticle.style.width = '40px';
+            reticle.style.height = '40px';
+            reticle.style.background = 'transparent';
+        });
+    });
+
+
+    // --- 2. 3D KINETIC TILT EFFECT ---
+    document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            let rect = card.getBoundingClientRect();
+            let x = e.clientX - rect.left; // x position within the element.
+            let y = e.clientY - rect.top;  // y position within the element.
+            
+            let centerX = rect.width / 2;
+            let centerY = rect.height / 2;
+            
+            let rotateX = ((y - centerY) / centerY) * -8; // Max rotation degrees
+            let rotateY = ((x - centerX) / centerX) * 8;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            card.style.transition = `transform 0.5s ease`;
+        });
+        
+        card.addEventListener('mouseenter', () => {
+            card.style.transition = `none`; // Remove transition while moving for instant feel
+        });
+    });
+
+
+    // --- 3. CRYPTOGRAPHIC TEXT REVEAL ---
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+    
+    function scrambleText(element) {
+        let iterations = 0;
+        const finalString = element.getAttribute('data-target');
+        
+        const interval = setInterval(() => {
+            element.innerText = finalString.split('').map((char, index) => {
+                if(index < iterations) return finalString[index];
+                return letters[Math.floor(Math.random() * letters.length)];
+            }).join('');
+            
+            if(iterations >= finalString.length) clearInterval(interval);
+            iterations += 1 / 3;
+        }, 30);
+    }
+
+
+    // --- 4. SCROLL OBSERVER (Triggers Scramble and Fade In) ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (!entry.target.classList.contains('visible')) {
+                    entry.target.classList.add('visible');
+                    // Find any text inside this section that needs decrypting
+                    const decryptElements = entry.target.querySelectorAll('.decrypt-text');
+                    decryptElements.forEach(el => scrambleText(el));
+                }
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.section').forEach(section => observer.observe(section));
+
+
+    // --- 5. INTERACTIVE BACKGROUND CANVAS ---
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    for (let i = 0; i < 70; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 2
+        });
+    }
+
+    function drawNetwork() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        for (let i = 0; i < particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx; p.y += p.vy;
+            
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            // Interactive Repulsion from mouse
+            let dx = mouseX - p.x;
+            let dy = mouseY - p.y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 150) {
+                p.x -= dx * 0.02;
+                p.y -= dy * 0.02;
+            }
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(217, 4, 41, 0.5)';
+            ctx.fill();
+
+            // Connect lines
+            for (let j = i; j < particles.length; j++) {
+                let p2 = particles[j];
+                let dist2 = Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2));
+                if (dist2 < 120) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(217, 4, 41, ${0.2 - dist2/600})`;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(drawNetwork);
+    }
+    drawNetwork();
+
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+    // --- 6. BOOT SEQUENCE ---
     const bootStatus = document.getElementById('boot-status');
     const bootProgress = document.getElementById('boot-progress');
-    const bootScreen = document.getElementById('boot-screen');
-    const mainContent = document.getElementById('main-content');
-
-    const statuses = [
-        "ESTABLISHING SECURE CONNECTION...",
-        "VERIFYING OPERATOR CREDENTIALS...",
-        "LOADING TACTICAL INTERFACE...",
-        "ACCESS GRANTED."
-    ];
-
+    const statuses = [ "BYPASSING FIREWALLS...", "INJECTING PAYLOAD...", "DECRYPTING ASSETS...", "ACCESS GRANTED" ];
     let step = 0;
     
     function bootSystem() {
@@ -355,32 +499,20 @@
             bootStatus.innerText = statuses[step];
             bootProgress.style.width = ((step + 1) / statuses.length) * 100 + "%";
             step++;
-            setTimeout(bootSystem, 400 + Math.random() * 300);
+            setTimeout(bootSystem, 500 + Math.random() * 300);
         } else {
             setTimeout(() => {
-                bootScreen.style.opacity = '0';
+                document.getElementById('boot-screen').style.opacity = '0';
                 setTimeout(() => {
-                    bootScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    setTimeout(() => mainContent.style.opacity = '1', 50);
+                    document.getElementById('boot-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    setTimeout(() => document.getElementById('main-content').style.opacity = '1', 50);
                 }, 500);
-            }, 500);
+            }, 400);
         }
     }
     window.onload = bootSystem;
 
-    // Scroll Reveal Effect
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.section').forEach(section => {
-        observer.observe(section);
-    });
 </script>
 
 </body>
