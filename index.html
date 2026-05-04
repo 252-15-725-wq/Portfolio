@@ -3,437 +3,685 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S. M. Maruf Hasan | Tactical Operator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
-    
+    <title>S. M. Maruf Hasan | Red Team Operator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #d90429; 
-            --primary-glow: rgba(217, 4, 41, 0.5);
-            --bg: #030303;
-            --surface: rgba(12, 12, 14, 0.6);
-            --text-main: #f8f9fa;
-            --text-muted: #6c757d;
-            --border: #2b2b2b;
-        }
+    :root {
+        --red:       #e8001d;
+        --red-hi:    #ff2d4a;
+        --red-dim:   rgba(232, 0, 29, 0.12);
+        --red-glow:  rgba(232, 0, 29, 0.45);
+        --cyan:      #00c8ff;
+        --cyan-dim:  rgba(0, 200, 255, 0.09);
+        --cyan-glow: rgba(0, 200, 255, 0.3);
+        --gold:      #f0a500;
 
-        * { box-sizing: border-box; }
-        
-        body {
-            margin: 0; background-color: var(--bg); color: var(--text-main);
-            font-family: 'Fira Code', monospace; overflow-x: hidden; scroll-behavior: smooth; cursor: none; 
-        }
+        --bg:    #07080d;
+        --bg2:   #0b0d16;
+        --bg3:   #0f1220;
+        --panel: rgba(11,13,21,0.95);
 
-        /* Authorization Screen */
-        #auth-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 100000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; cursor: pointer;
-        }
-        .auth-btn {
-            color: var(--primary); font-family: 'Share Tech Mono'; font-size: 1.5rem;
-            letter-spacing: 3px; animation: pulse 1.5s infinite; text-shadow: 0 0 10px var(--primary);
-        }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        --border:    rgba(255,255,255,0.055);
+        --border-hi: rgba(255,255,255,0.13);
 
-        /* Tactical Cursor */
-        .cursor-reticle {
-            position: fixed; width: 40px; height: 40px; border: 1px solid var(--primary); border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 10000;
-            transition: width 0.2s, height 0.2s, background 0.2s; box-shadow: 0 0 10px var(--primary-glow), inset 0 0 10px var(--primary-glow);
-        }
-        .cursor-dot {
-            position: fixed; width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 10000;
-        }
+        --text:  #dce4f0;
+        --text2: #8a95aa;
+        --text3: #4e5768;
+    }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); }
+    *  { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-        body::before {
-            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(217, 4, 41, 0.03) 50%, rgba(0, 0, 0, 0.1) 50%);
-            z-index: 1000; background-size: 100% 4px; pointer-events: none;
-        }
-        #network-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.4; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'JetBrains Mono', monospace;
+        overflow-x: hidden;
+        cursor: none;
+    }
 
-        #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; color: var(--primary);
-            z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .boot-logo { font-size: 3.5rem; margin-bottom: 20px; letter-spacing: 12px; font-family: 'Share Tech Mono'; text-shadow: 0 0 15px var(--primary); }
-        .boot-bar { width: 400px; height: 2px; background: #222; margin-top: 20px; }
-        .boot-progress { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 15px var(--primary); }
+    /* scanlines */
+    body::after {
+        content: '';
+        position: fixed; inset: 0;
+        background: repeating-linear-gradient(0deg,
+            transparent, transparent 2px,
+            rgba(0,0,0,0.055) 2px, rgba(0,0,0,0.055) 4px);
+        pointer-events: none; z-index: 9998;
+    }
+    /* vignette */
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background: radial-gradient(ellipse 100% 100% at 50% 50%,
+            transparent 50%, rgba(0,0,0,0.7) 100%);
+        pointer-events: none; z-index: 9997;
+    }
 
-        #main-content { display: none; opacity: 0; transition: opacity 1.5s; }
-        .container { max-width: 1100px; margin: auto; padding: 60px 20px; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--red); }
 
-        h1, h2, h3, .hud-title { font-family: 'Share Tech Mono', monospace; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
-        .decrypt-text { display: inline-block; }
+    /* ── CURSOR ── */
+    #c-ring {
+        position: fixed; width: 32px; height: 32px;
+        border: 1px solid var(--cyan); border-radius: 50%;
+        transform: translate(-50%,-50%);
+        pointer-events: none; z-index: 99999;
+        transition: width .2s cubic-bezier(.2,1,.4,1), height .2s cubic-bezier(.2,1,.4,1),
+                    background .2s, border-color .2s;
+        box-shadow: 0 0 10px var(--cyan-glow), inset 0 0 8px rgba(0,200,255,0.04);
+    }
+    #c-dot {
+        position: fixed; width: 3px; height: 3px;
+        background: var(--red-hi); border-radius: 50%;
+        transform: translate(-50%,-50%);
+        pointer-events: none; z-index: 99999;
+        box-shadow: 0 0 8px var(--red-glow);
+    }
 
-        .section { margin-bottom: 100px; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.1, 1, 0.3, 1); }
-        .section.visible { opacity: 1; transform: translateY(0); }
+    /* ── AUTH ── */
+    #auth {
+        position: fixed; inset: 0; background: #000;
+        z-index: 100000;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 32px;
+        cursor: pointer;
+    }
+    .auth-ring {
+        width: 88px; height: 88px;
+        border: 1px solid var(--red); border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        position: relative;
+        box-shadow: 0 0 40px var(--red-glow), inset 0 0 20px rgba(232,0,29,0.07);
+        animation: ap 2.5s ease-in-out infinite;
+    }
+    @keyframes ap { 0%,100%{ box-shadow:0 0 30px var(--red-glow); } 50%{ box-shadow:0 0 70px var(--red-glow),0 0 120px rgba(232,0,29,0.15); } }
+    .auth-ring::before { content:''; position:absolute; inset:-12px; border:1px solid rgba(232,0,29,0.25); border-radius:50%; }
+    .auth-ring::after  { content:''; position:absolute; inset:-24px; border:1px dashed rgba(232,0,29,0.12); border-radius:50%; animation:spin 10s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .auth-sym { font-size:2rem; color:var(--red); text-shadow:0 0 20px var(--red-glow); }
+    .auth-cta { font-size:0.68rem; letter-spacing:5px; color:var(--text2); text-transform:uppercase; animation:ab 1.8s step-end infinite; }
+    @keyframes ab { 0%,100%{opacity:1} 50%{opacity:.15} }
+    .auth-ver { font-size:0.58rem; letter-spacing:3px; color:var(--text3); }
 
-        .header-box { border-left: 4px solid var(--primary); padding-left: 25px; margin-bottom: 40px; }
-        .header-title { font-size: 4rem; color: #fff; text-shadow: 0 0 15px rgba(217, 4, 41, 0.4); letter-spacing: 5px; }
-        .header-sub { color: var(--primary); font-size: 1.2rem; margin-top: 10px; letter-spacing: 3px; }
+    /* ── BOOT ── */
+    #boot {
+        position: fixed; inset: 0;
+        background: var(--bg);
+        z-index: 9999; display: none;
+        flex-direction: column; justify-content: center;
+        padding: clamp(30px,8vw,120px);
+    }
+    .boot-hd { display:flex; align-items:center; gap:14px; margin-bottom:36px; }
+    .boot-badge { background:var(--red); color:#fff; font-size:0.58rem; letter-spacing:3px; padding:5px 12px; text-transform:uppercase; }
+    .boot-ver { font-size:0.62rem; color:var(--text3); letter-spacing:2px; }
+    .bl {
+        font-size:clamp(0.68rem,1.2vw,0.78rem);
+        color:var(--text3); margin-bottom:8px;
+        opacity:0; transform:translateX(-10px);
+        transition:opacity .22s,transform .22s;
+        white-space:nowrap;
+    }
+    .bl.on { opacity:1; transform:translateX(0); }
+    .bl .t  { color:var(--text2); }
+    .bl .ok { color:var(--cyan); }
+    .bl .wa { color:var(--gold); }
+    .boot-bar { width:min(480px,80vw); height:1px; background:var(--border); margin-top:28px; overflow:hidden; }
+    .boot-prog { height:100%; width:0%; background:linear-gradient(90deg,var(--red),var(--cyan)); box-shadow:0 0 12px var(--cyan-glow); transition:width .26s ease; }
+    .boot-p { font-size:0.6rem; color:var(--text3); letter-spacing:2px; margin-top:9px; }
 
-        .objective-block { border-left: 2px solid #444; background: rgba(255,255,255,0.02); padding: 20px 25px; color: #aaa; font-size: 1.1rem; line-height: 1.7; margin-bottom: 50px; }
+    /* ── BG CANVAS ── */
+    #bg-cv { position:fixed; inset:0; z-index:-1; pointer-events:none; }
 
-        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px; perspective: 1000px; }
-        
-        .data-card {
-            background: var(--surface); backdrop-filter: blur(8px); border: 1px solid var(--border); padding: 30px;
-            display: flex; flex-direction: column; position: relative; transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            transform-style: preserve-3d; will-change: transform;
-        }
-        .data-card::before { content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 15px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
-        .data-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
-        .data-card:hover { border-color: #555; box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 20px rgba(217, 4, 41, 0.2); }
-        .data-card > * { transform: translateZ(30px); }
-        
-        .label { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 1px; }
-        .value { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
-        .sub-value { color: var(--primary); font-size: 0.9rem; }
+    /* ── MAIN ── */
+    #main { display:none; opacity:0; transition:opacity 1.1s ease; }
+    .wrap { max-width:1120px; margin:auto; padding:0 clamp(20px,5vw,64px); }
 
-        .segment-header { font-size: 1.8rem; color: #fff; margin: 80px 0 40px 0; display: flex; align-items: center; }
-        .segment-header::before { content: "///"; color: var(--primary); margin-right: 15px; letter-spacing: 2px; }
-        .segment-header::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin-left: 20px; }
+    /* ── HERO ── */
+    .hero {
+        min-height: 100vh;
+        display: flex; flex-direction: column; justify-content: center;
+        padding: clamp(60px,10vh,100px) clamp(20px,5vw,64px);
+        max-width: 1120px; margin: auto; position: relative;
+    }
+    .hero-eye { display:flex; align-items:center; gap:12px; margin-bottom:36px; }
+    .eye-line { width:36px; height:1px; background:var(--red); }
+    .eye-txt  { font-size:0.62rem; letter-spacing:4px; color:var(--red); text-transform:uppercase; }
+    .live-b   { margin-left:auto; display:flex; align-items:center; gap:7px; font-size:0.58rem; letter-spacing:3px; color:var(--text3); }
+    .live-dot { width:5px; height:5px; border-radius:50%; background:var(--red); box-shadow:0 0 8px var(--red-glow); animation:lp 1.4s ease-in-out infinite; }
+    @keyframes lp { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.65)} }
 
-        ul { padding-left: 0; list-style: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-top: 15px;}
-        li { margin-bottom: 12px; display: flex; align-items: flex-start; }
-        li::before { content: "[]"; color: var(--primary); margin-right: 12px; font-family: 'Share Tech Mono'; }
-        
-        a { color: var(--text-main); text-decoration: none; border-bottom: 1px solid var(--primary); padding-bottom: 2px; transition: 0.3s; cursor: none;}
-        a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+    .hero-name {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(3.2rem,9.5vw,8rem);
+        font-weight: 800;
+        line-height: .92;
+        letter-spacing: -2px;
+        color: #fff;
+        text-transform: uppercase;
+        position: relative;
+    }
+    .hero-name .ln1 { display:block; }
+    .hero-name .ln2 {
+        display: block;
+        -webkit-text-stroke: 1px rgba(255,255,255,0.22);
+        color: transparent; position: relative;
+    }
+    .hero-name .ln2::before,
+    .hero-name .ln2::after {
+        content: attr(data-t); position:absolute; top:0; left:0;
+        -webkit-text-stroke: 0;
+    }
+    .hero-name .ln2::before { color:var(--red-hi); clip-path:polygon(0 0,100% 0,100% 40%,0 40%); animation:g1 5s infinite; }
+    .hero-name .ln2::after  { color:var(--cyan);   clip-path:polygon(0 58%,100% 58%,100% 100%,0 100%); animation:g2 5s infinite; }
+    @keyframes g1 { 0%,88%,100%{opacity:0;transform:translate(0)} 89%{opacity:.9;transform:translate(-4px,1px)} 91%{opacity:.9;transform:translate(4px,-1px)} 93%{opacity:0} }
+    @keyframes g2 { 0%,88%,100%{opacity:0;transform:translate(0)} 90%{opacity:.8;transform:translate(4px,2px)} 92%{opacity:.8;transform:translate(-3px,-1px)} 93%{opacity:0} }
+
+    .hero-role {
+        font-size: clamp(0.72rem,1.7vw,0.95rem);
+        color: var(--text3); letter-spacing: 4px;
+        margin-top: 22px;
+        display: flex; align-items: center; flex-wrap: wrap;
+    }
+    .hr-item { color:var(--text2); }
+    .hr-sep  { color:var(--red); margin:0 14px; }
+
+    .hero-bio {
+        margin-top: 30px; max-width: 560px;
+        font-size: 0.82rem; line-height: 1.9; color: var(--text3);
+        border-left: 2px solid rgba(232,0,29,0.3);
+        padding-left: 20px;
+    }
+    .hero-bio em { color:var(--cyan); font-style:normal; }
+
+    .hero-stats {
+        display: flex; flex-wrap: wrap;
+        margin-top: 52px; width: fit-content;
+        border: 1px solid var(--border);
+    }
+    .stat {
+        padding: 18px 30px;
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+        position: relative; overflow: hidden;
+        transition: background .3s;
+    }
+    .stat:last-child { border-right:none; }
+    .stat::before {
+        content:''; position:absolute; top:0; left:0; right:0; height:1px;
+        background:linear-gradient(90deg,var(--red),var(--cyan));
+        opacity:0; transition:opacity .3s;
+    }
+    .stat:hover { background:var(--bg3); }
+    .stat:hover::before { opacity:1; }
+    .stat-v { font-family:'Syne'; font-weight:800; font-size:.98rem; color:#fff; letter-spacing:1px; display:block; }
+    .stat-k { font-size:0.58rem; color:var(--text3); letter-spacing:3px; text-transform:uppercase; display:block; margin-top:4px; }
+
+    /* ── SECTION ── */
+    .sec {
+        padding: 88px 0;
+        border-top: 1px solid var(--border);
+        opacity: 0; transform: translateY(18px);
+        transition: opacity .7s ease, transform .7s ease;
+    }
+    .sec.vis { opacity:1; transform:translateY(0); }
+
+    .sec-hd { display:flex; align-items:baseline; gap:18px; margin-bottom:50px; }
+    .sec-n  { font-size:0.58rem; color:var(--red); letter-spacing:3px; }
+    .sec-t  { font-family:'Syne'; font-size:clamp(1.1rem,2.5vw,1.5rem); font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:2px; }
+    .sec-r  { flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+
+    /* ── CARDS ── */
+    .g3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:var(--border); }
+    .g1 { display:grid; gap:1px; background:var(--border); }
+
+    .card {
+        background: var(--panel); padding: 30px;
+        position: relative; overflow: hidden;
+        transition: background .3s;
+    }
+    .card::after {
+        content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+        background:linear-gradient(90deg,var(--red),var(--cyan));
+        transform:scaleX(0); transform-origin:left;
+        transition:transform .4s cubic-bezier(.2,1,.4,1);
+    }
+    .card:hover { background:var(--bg3); }
+    .card:hover::after { transform:scaleX(1); }
+
+    .c-tag {
+        font-size:0.58rem; letter-spacing:3px; text-transform:uppercase;
+        color:var(--text3); margin-bottom:14px;
+        display:flex; align-items:center; gap:10px;
+    }
+    .c-tag::before { content:''; width:18px; height:1px; background:var(--red); display:inline-block; }
+    .c-val { font-family:'Syne'; font-size:1.1rem; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:5px; }
+    .c-sub { font-size:0.7rem; color:var(--cyan); letter-spacing:1px; }
+    .c-body { font-size:0.79rem; color:var(--text3); line-height:1.8; margin-top:13px; }
+
+    .cl { list-style:none; margin-top:15px; }
+    .cl li {
+        font-size:0.77rem; color:var(--text3);
+        line-height:1.6; margin-bottom:9px;
+        display:flex; gap:10px; align-items:flex-start;
+    }
+    .cl li::before { content:'▸'; color:var(--red); flex-shrink:0; font-size:.68rem; margin-top:3px; }
+
+    /* ── RE ── */
+    .re-wrap {
+        background:var(--panel);
+        border:1px solid var(--border);
+        position:relative; overflow:hidden;
+    }
+    .re-wrap::before {
+        content:''; position:absolute; inset:0;
+        background:
+            radial-gradient(ellipse 40% 70% at 100% 50%, rgba(0,200,255,0.045) 0%, transparent 70%),
+            radial-gradient(ellipse 35% 60% at 0% 50%,   rgba(232,0,29,0.04) 0%, transparent 70%);
+        pointer-events:none;
+    }
+    .re-top {
+        padding:34px 34px 26px;
+        border-bottom:1px solid var(--border);
+        display:flex; align-items:flex-start; gap:22px;
+    }
+    .re-bar { width:2px; flex-shrink:0; align-self:stretch; background:linear-gradient(180deg,var(--red),var(--cyan)); border-radius:2px; }
+    .re-intro { font-size:0.86rem; color:var(--text2); line-height:1.85; }
+    .re-cols { display:flex; }
+    .re-col { flex:1; padding:28px 34px; border-right:1px solid var(--border); }
+    .re-col:last-child { border-right:none; }
+    .re-ct { font-size:0.58rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+    .re-ct::after { content:''; flex:1; height:1px; background:var(--border); }
+    .re-ct.r { color:var(--red); }
+    .re-ct.c { color:var(--cyan); }
+
+    /* ── OPS ── */
+    .op {
+        display:grid; grid-template-columns:150px 1fr;
+        background:var(--panel);
+        position:relative; overflow:hidden;
+        transition:background .3s;
+    }
+    .op::before {
+        content:''; position:absolute;
+        left:0; top:0; bottom:0; width:2px;
+        background:linear-gradient(180deg,var(--red),transparent);
+        opacity:0; transition:opacity .3s;
+    }
+    .op:hover { background:var(--bg3); }
+    .op:hover::before { opacity:1; }
+    .op-l {
+        padding:28px 20px;
+        border-right:1px solid var(--border);
+        display:flex; flex-direction:column; justify-content:space-between;
+        background:rgba(232,0,29,0.02);
+    }
+    .op-time { font-size:0.58rem; letter-spacing:3px; color:var(--text3); text-transform:uppercase; }
+    .op-ind  { display:flex; align-items:center; gap:6px; font-size:0.56rem; letter-spacing:2px; color:var(--text3); text-transform:uppercase; }
+    .ind-dot { width:4px; height:4px; border-radius:50%; }
+    .i-live { background:var(--red); box-shadow:0 0 6px var(--red-glow); animation:lp 1.4s infinite; }
+    .i-done { background:var(--text3); }
+    .op-r { padding:28px 30px; }
+    .op-title { font-family:'Syne'; font-size:1.02rem; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:4px; }
+    .op-org   { font-size:0.62rem; color:var(--cyan); letter-spacing:3px; text-transform:uppercase; margin-bottom:16px; }
+
+    /* ── FOOTER ── */
+    .footer { padding:76px 0 56px; border-top:1px solid var(--border); text-align:center; }
+    .f-links { display:flex; justify-content:center; gap:1px; flex-wrap:wrap; margin-bottom:52px; }
+    .f-link {
+        font-size:0.68rem; letter-spacing:3px; text-transform:uppercase;
+        color:var(--text3); padding:15px 34px;
+        background:var(--panel); border:1px solid var(--border);
+        display:inline-flex; align-items:center; gap:9px;
+        transition:color .3s,border-color .3s,background .3s;
+        position:relative; overflow:hidden; cursor:none;
+    }
+    .f-link::before { content:attr(data-pre); color:var(--red); }
+    .f-link::after {
+        content:''; position:absolute; inset:0;
+        background:linear-gradient(135deg,var(--red-dim),var(--cyan-dim));
+        opacity:0; transition:opacity .3s;
+    }
+    .f-link:hover { color:#fff; border-color:var(--border-hi); }
+    .f-link:hover::after { opacity:1; }
+    .f-sig { font-size:0.6rem; letter-spacing:4px; color:var(--text3); text-transform:uppercase; }
+    .f-sig span { color:var(--red); }
+
+    a { color:inherit; text-decoration:none; cursor:none; transition:color .2s; }
+    a:hover { color:var(--cyan); }
+
+    @media(max-width:620px){
+        .hero-stats { flex-direction:column; }
+        .stat { border-right:none; border-bottom:1px solid var(--border); }
+        .op { grid-template-columns:1fr; }
+        .op-l { flex-direction:row; align-items:center; gap:20px; border-right:none; border-bottom:1px solid var(--border); padding:14px 20px; }
+        .re-cols { flex-direction:column; }
+        .re-col { border-right:none; border-bottom:1px solid var(--border); }
+    }
     </style>
 </head>
 <body>
 
-<div id="auth-screen">
-    <div class="auth-btn">[ CLICK TO ESTABLISH UPLINK ]</div>
+<div id="auth">
+    <div class="auth-ring"><span class="auth-sym">⬡</span></div>
+    <div class="auth-cta">[ CLICK TO ESTABLISH UPLINK ]</div>
+    <div class="auth-ver">TACTICAL SYSTEM v2 // AWAITING AUTHORIZATION</div>
 </div>
 
-<div class="cursor-dot" id="cursor-dot"></div>
-<div class="cursor-reticle" id="cursor-reticle"></div>
+<div id="c-dot"></div>
+<div id="c-ring"></div>
 
-<div id="boot-screen">
-    <div class="hud-title boot-logo">TACTICAL_SYS_V2</div>
-    <div style="font-family: 'Fira Code'; color: #666; font-size: 0.85rem;" id="boot-status">CONNECTING...</div>
-    <div class="boot-bar"><div class="boot-progress" id="boot-progress"></div></div>
-</div>
-
-<canvas id="network-canvas"></canvas>
-
-<div id="main-content">
-    <div class="container">
-        
-        <div class="section visible">
-            <div class="header-box">
-                <div class="header-title decrypt-text" data-target="S M MARUF HASAN">S M MARUF HASAN</div>
-                <div class="header-sub decrypt-text" data-target="OPERATOR // RED TEAM // REVERSE ENGINEER">OPERATOR // RED TEAM // REVERSE ENGINEER</div>
-            </div>
-            <div class="objective-block">
-                > Building a strong foundation in Ethical Hacking, Penetration Testing, and Binary Analysis.<br>
-                > Currently focused on understanding system internals to approach security from an offensive perspective.
-            </div>
-            <div class="data-grid">
-                <div class="data-card tilt-card">
-                    <span class="label">COMMAND RANK</span>
-                    <span class="value">LEAD EXECUTIVE</span>
-                    <span class="sub-value">DIU Cyber Security Club</span>
-                </div>
-                <div class="data-card tilt-card">
-                    <span class="label">AFFILIATION</span>
-                    <span class="value">B.Sc. CSE STUDENT</span>
-                    <span class="sub-value">Daffodil International University</span>
-                </div>
-                <div class="data-card tilt-card">
-                    <span class="label">SECURE COMM</span>
-                    <span class="value">DHAKA, BD</span>
-                    <span class="sub-value"><a href="mailto:sardermarufhasan@gmail.com" style="border:none;">sardermarufhasan@gmail.com</a></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="segment-header decrypt-text" data-target="ACADEMIC_RECON">ACADEMIC_RECON</div>
-            <div class="data-grid">
-                <div class="data-card tilt-card">
-                    <span class="label">DEGREE PROGRAM</span>
-                    <span class="value">B.Sc. Computer Science</span>
-                    <p style="color:#888; font-size:0.9rem; margin:15px 0 0 0;">Daffodil International University. Core focus on information security algorithms. Expected: 2029.</p>
-                </div>
-                <div class="data-card tilt-card">
-                    <span class="label">FOUNDATIONAL TRAINING</span>
-                    <span class="value">Cybersecurity Basics</span>
-                    <span class="sub-value">Hack To Live Academy</span>
-                    <ul><li>Network Enumeration & Nmap</li><li>Web Exploitation Fundamentals</li><li>OSI/TCP-IP Architecture</li></ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="segment-header decrypt-text" data-target="CERTIFICATION_LOG">CERTIFICATION_LOG</div>
-            <div class="data-grid">
-                <div class="data-card tilt-card">
-                    <span class="label">TCM SECURITY</span>
-                    <span class="value">Systems & Code</span>
-                    <ul><li>Linux 100: Fundamentals</li><li>Programming 100: Fundamentals</li></ul>
-                </div>
-                <div class="data-card tilt-card">
-                    <span class="label">INFRASTRUCTURE</span>
-                    <span class="value">Networking & Scripts</span>
-                    <ul><li>Intro to Cybersecurity (Cisco)</li><li>PowerShell Regex (Udemy)</li></ul>
-                </div>
-                <div class="data-card tilt-card">
-                    <span class="label">PROFESSIONAL GROWTH</span>
-                    <span class="value">Leadership & AI</span>
-                    <ul><li>Campus to Success (LDA)</li><li>MS Copilot Prompts (Microsoft)</li></ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="segment-header decrypt-text" data-target="MODULE: REVERSE_ENGINEERING">MODULE: REVERSE_ENGINEERING</div>
-            <div class="data-card tilt-card" style="width: 100%; border-left: 4px solid var(--primary);">
-                <p style="color:#ccc; font-size:1.1rem; margin-top:0; line-height:1.7; transform: translateZ(30px);">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level.</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 20px; transform: translateZ(40px);">
-                    <div style="flex: 1; min-width: 250px;">
-                        <h3 style="color:var(--primary); font-size:1.2rem;">CURRENT FOCUS</h3>
-                        <ul><li>Reading x86/x64 Assembly</li><li>Hands-on with Debuggers (GDB)</li><li>Memory Constraints & Overflows</li></ul>
-                    </div>
-                    <div style="flex: 1; min-width: 250px;">
-                        <h3 style="color:var(--primary); font-size:1.2rem;">FAMILIAR ARSENAL</h3>
-                        <ul><li>Ghidra / Radare2</li><li>Metasploit Framework</li><li>Burp Suite</li></ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="segment-header decrypt-text" data-target="OPERATIONS_LOG">OPERATIONS_LOG</div>
-            <div class="data-grid" style="grid-template-columns: 1fr;">
-                <div class="data-card tilt-card" style="padding: 25px 40px;">
-                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">Lead Executive</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">PRESENT</span>
-                    </div>
-                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cyber Security Club</span>
-                    <ul style="transform:translateZ(30px);"><li>Assisting in organizing CTF training and security awareness workshops.</li><li>Collaborating to promote cybersecurity education on campus.</li></ul>
-                </div>
-                <div class="data-card tilt-card" style="padding: 25px 40px;">
-                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">Volunteer Recognition</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">2025</span>
-                    </div>
-                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cybercon</span>
-                    <p style="color:#aaa; margin:0; transform:translateZ(30px);">Officially recognized with a Certificate of Appreciation for providing logistical and technical session support for the National Capture The Flag and cyber conference.</p>
-                </div>
-                <div class="data-card tilt-card" style="padding: 25px 40px;">
-                    <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">1st Runner-Up</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">2024-2025</span>
-                    </div>
-                    <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">Cyber Security Awareness CTF</span>
-                    <p style="color:#aaa; margin:0; transform:translateZ(30px);">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="section" style="text-align: center; margin-bottom: 0; padding-bottom: 40px;">
-            <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;">
-                <a href="https://github.com/252-15-725-wq" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.8rem; letter-spacing: 2px;">[ GITHUB ]</a>
-                <a href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.8rem; letter-spacing: 2px;">[ LINKEDIN ]</a>
-            </div>
-            <p style="color:#555; font-family:'Share Tech Mono'; letter-spacing:4px; font-size:0.9rem;">
-                OPERATOR ID: 252-15-725 // UPLINK SECURE
-            </p>
-        </div>
-
+<div id="boot">
+    <div class="boot-hd">
+        <span class="boot-badge">BOOT</span>
+        <span class="boot-ver">TACTICAL_SYS v2.7.1-rc</span>
     </div>
+    <div id="boot-log"></div>
+    <div class="boot-bar"><div class="boot-prog" id="b-prog"></div></div>
+    <div class="boot-p" id="b-pct">0%</div>
+</div>
+
+<canvas id="bg-cv"></canvas>
+
+<div id="main">
+
+    <section>
+        <div class="hero">
+            <div class="hero-eye">
+                <span class="eye-line"></span>
+                <span class="eye-txt">Operator File // Classified</span>
+                <span class="live-b"><span class="live-dot"></span>LIVE</span>
+            </div>
+            <h1 class="hero-name">
+                <span class="ln1">S M MARUF</span>
+                <span class="ln2" data-t="HASAN">HASAN</span>
+            </h1>
+            <div class="hero-role">
+                <span class="hr-item">OPERATOR</span><span class="hr-sep">/</span>
+                <span class="hr-item">RED TEAM</span><span class="hr-sep">/</span>
+                <span class="hr-item">REVERSE ENGINEER</span>
+            </div>
+            <p class="hero-bio">
+                Building a strong foundation in <em>Ethical Hacking</em>, Penetration Testing, and Binary Analysis.
+                Currently focused on understanding system internals to approach security from an <em>offensive perspective</em>.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-v">LEAD EXEC</span>
+                    <span class="stat-k">DIU Cyber Security Club</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-v">B.Sc. CSE</span>
+                    <span class="stat-k">Daffodil Intl. University</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-v">DHAKA, BD</span>
+                    <span class="stat-k"><a href="mailto:sardermarufhasan@gmail.com">sardermarufhasan@gmail.com</a></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec wrap">
+        <div class="sec-hd"><span class="sec-n">01</span><h2 class="sec-t">Academic Recon</h2><div class="sec-r"></div></div>
+        <div class="g3">
+            <div class="card">
+                <div class="c-tag">Degree Program</div>
+                <div class="c-val">B.Sc. Computer Science</div>
+                <div class="c-sub">Daffodil International University</div>
+                <p class="c-body">Core focus on information security algorithms. Expected graduation: 2029.</p>
+            </div>
+            <div class="card">
+                <div class="c-tag">Foundational Training</div>
+                <div class="c-val">Cybersecurity Basics</div>
+                <div class="c-sub">Hack To Live Academy</div>
+                <ul class="cl">
+                    <li>Network Enumeration &amp; Nmap</li>
+                    <li>Web Exploitation Fundamentals</li>
+                    <li>OSI / TCP-IP Architecture</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec wrap">
+        <div class="sec-hd"><span class="sec-n">02</span><h2 class="sec-t">Certification Log</h2><div class="sec-r"></div></div>
+        <div class="g3">
+            <div class="card">
+                <div class="c-tag">TCM Security</div>
+                <div class="c-val">Systems &amp; Code</div>
+                <ul class="cl">
+                    <li>Linux 100: Fundamentals</li>
+                    <li>Programming 100: Fundamentals</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="c-tag">Infrastructure</div>
+                <div class="c-val">Networking &amp; Scripts</div>
+                <ul class="cl">
+                    <li>Intro to Cybersecurity (Cisco)</li>
+                    <li>PowerShell Regex (Udemy)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="c-tag">Professional Growth</div>
+                <div class="c-val">Leadership &amp; AI</div>
+                <ul class="cl">
+                    <li>Campus to Success (LDA)</li>
+                    <li>MS Copilot Prompts (Microsoft)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec wrap">
+        <div class="sec-hd"><span class="sec-n">03</span><h2 class="sec-t">Module: Reverse Engineering</h2><div class="sec-r"></div></div>
+        <div class="re-wrap">
+            <div class="re-top">
+                <div class="re-bar"></div>
+                <p class="re-intro">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level.</p>
+            </div>
+            <div class="re-cols">
+                <div class="re-col">
+                    <div class="re-ct r">Current Focus</div>
+                    <ul class="cl">
+                        <li>Reading x86/x64 Assembly</li>
+                        <li>Hands-on with Debuggers (GDB)</li>
+                        <li>Memory Constraints &amp; Overflows</li>
+                    </ul>
+                </div>
+                <div class="re-col">
+                    <div class="re-ct c">Familiar Arsenal</div>
+                    <ul class="cl">
+                        <li>Ghidra / Radare2</li>
+                        <li>Metasploit Framework</li>
+                        <li>Burp Suite</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec wrap">
+        <div class="sec-hd"><span class="sec-n">04</span><h2 class="sec-t">Operations Log</h2><div class="sec-r"></div></div>
+        <div class="g1">
+            <div class="op">
+                <div class="op-l">
+                    <span class="op-time">Present</span>
+                    <span class="op-ind"><span class="ind-dot i-live"></span>Active</span>
+                </div>
+                <div class="op-r">
+                    <div class="op-title">Lead Executive</div>
+                    <div class="op-org">DIU Cyber Security Club</div>
+                    <ul class="cl">
+                        <li>Assisting in organizing CTF training and security awareness workshops.</li>
+                        <li>Collaborating to promote cybersecurity education on campus.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="op">
+                <div class="op-l">
+                    <span class="op-time">2025</span>
+                    <span class="op-ind"><span class="ind-dot i-done"></span>Complete</span>
+                </div>
+                <div class="op-r">
+                    <div class="op-title">Volunteer Recognition</div>
+                    <div class="op-org">DIU Cybercon</div>
+                    <p class="c-body" style="margin-top:0">Officially recognized with a Certificate of Appreciation for providing logistical and technical session support for the National Capture The Flag and cyber conference.</p>
+                </div>
+            </div>
+            <div class="op">
+                <div class="op-l">
+                    <span class="op-time">2024–2025</span>
+                    <span class="op-ind"><span class="ind-dot i-done"></span>Complete</span>
+                </div>
+                <div class="op-r">
+                    <div class="op-title">1st Runner-Up</div>
+                    <div class="op-org">Cyber Security Awareness CTF</div>
+                    <p class="c-body" style="margin-top:0">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer wrap">
+        <div class="f-links">
+            <a class="f-link" data-pre="↗ " href="https://github.com/252-15-725-wq" target="_blank">GitHub</a>
+            <a class="f-link" data-pre="↗ " href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank">LinkedIn</a>
+            <a class="f-link" data-pre="✉ " href="mailto:sardermarufhasan@gmail.com">Email</a>
+        </div>
+        <div class="f-sig">OPERATOR ID: <span>252-15-725</span> // UPLINK <span>SECURE</span></div>
+    </footer>
 </div>
 
 <script>
-    // --- 1. WEB AUDIO API (Synthesizing Sounds) ---
-    let audioCtx;
-    
-    function initAudio() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        startAmbientDrone();
-    }
+/* AUTH */
+document.getElementById('auth').addEventListener('click', () => {
+    const el = document.getElementById('auth');
+    el.style.transition = 'opacity .45s'; el.style.opacity = '0';
+    setTimeout(() => {
+        el.style.display = 'none';
+        document.getElementById('boot').style.display = 'flex';
+        setTimeout(runBoot, 280);
+    }, 450);
+});
 
-    // Creates a deep background hum
-    function startAmbientDrone() {
-        const osc = audioCtx.createOscillator();
-        const filter = audioCtx.createBiquadFilter();
-        const gain = audioCtx.createGain();
-        
-        osc.type = 'sawtooth';
-        osc.frequency.value = 40; // Deep bass freq
-        filter.type = 'lowpass';
-        filter.frequency.value = 100; // Muffle the harshness
-        gain.gain.value = 0.03; // Very quiet background drone
-        
-        osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-        osc.start();
-    }
-
-    // Plays a short UI blip
-    function playBlip(freq = 600, type = 'square', duration = 0.05, vol = 0.01) {
-        if(!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime + duration);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
-    }
-
-    // Auth Screen Click
-    document.getElementById('auth-screen').addEventListener('click', () => {
-        initAudio();
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('boot-screen').style.display = 'flex';
-        playBlip(300, 'square', 0.5, 0.05); // Power on sound
-        setTimeout(bootSystem, 500);
-    });
-
-    // --- 2. BOOT SEQUENCE ---
-    const bootStatus = document.getElementById('boot-status');
-    const bootProgress = document.getElementById('boot-progress');
-    const statuses = [ "BYPASSING FIREWALLS...", "INJECTING PAYLOAD...", "DECRYPTING ASSETS...", "ACCESS GRANTED" ];
-    let step = 0;
-    
-    function bootSystem() {
-        if (step < statuses.length) {
-            bootStatus.innerText = statuses[step];
-            bootProgress.style.width = ((step + 1) / statuses.length) * 100 + "%";
-            playBlip(800 + (step*100), 'sawtooth', 0.1, 0.02); // Data processing sound
-            step++;
-            setTimeout(bootSystem, 400 + Math.random() * 300);
-        } else {
-            playBlip(1200, 'sine', 0.3, 0.03); // Success chime
+/* BOOT */
+const BLINES = [
+    '<span class="t">[BIOS  ]</span>  Tactical System v2.7.1 initializing ... <span class="ok">OK</span>',
+    '<span class="t">[CRYPT ]</span>  Loading AES-256 modules ... <span class="ok">OK</span>',
+    '<span class="t">[NET   ]</span>  Probing uplink — latency 4ms ... <span class="ok">OK</span>',
+    '<span class="t">[RECON ]</span>  Scanning attack surface ... <span class="wa">3 open vectors mapped</span>',
+    '<span class="t">[AUTH  ]</span>  Validating operator credentials ... <span class="ok">PASS</span>',
+    '<span class="t">[SYS   ]</span>  All systems nominal — <span class="ok">ACCESS GRANTED</span>',
+];
+let bs = 0;
+function runBoot() {
+    if (bs >= BLINES.length) {
+        document.getElementById('b-prog').style.width = '100%';
+        document.getElementById('b-pct').textContent = '100%';
+        setTimeout(() => {
+            const b = document.getElementById('boot');
+            b.style.transition = 'opacity .65s'; b.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('boot-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('boot-screen').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    setTimeout(() => document.getElementById('main-content').style.opacity = '1', 50);
-                }, 500);
-            }, 400);
+                b.style.display = 'none';
+                const m = document.getElementById('main');
+                m.style.display = 'block';
+                setTimeout(() => m.style.opacity = '1', 40);
+            }, 650);
+        }, 480);
+        return;
+    }
+    const d = document.createElement('div');
+    d.className = 'bl'; d.innerHTML = BLINES[bs];
+    document.getElementById('boot-log').appendChild(d);
+    requestAnimationFrame(() => setTimeout(() => d.classList.add('on'), 16));
+    const p = Math.round((bs+1)/BLINES.length*100);
+    document.getElementById('b-prog').style.width = p+'%';
+    document.getElementById('b-pct').textContent = p+'%';
+    bs++; setTimeout(runBoot, 255 + Math.random()*180);
+}
+
+/* CURSOR */
+const ring = document.getElementById('c-ring');
+const dot  = document.getElementById('c-dot');
+let mx=0,my=0,rx=0,ry=0;
+window.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+(function tick(){ rx+=(mx-rx)*.13; ry+=(my-ry)*.13; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a,.card,.op,.stat,.re-wrap,.f-link').forEach(el => {
+        el.addEventListener('mouseenter', () => { ring.style.width='52px'; ring.style.height='52px'; ring.style.background='rgba(0,200,255,0.06)'; ring.style.borderColor='var(--cyan)'; });
+        el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.background='transparent'; });
+    });
+});
+
+/* ANIMATED BG — perspective grid + particle web */
+(function(){
+    const cv = document.getElementById('bg-cv');
+    const cx = cv.getContext('2d');
+    let W, H;
+    function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+
+    const N = 60;
+    const pts = Array.from({length:N}, () => ({
+        x: Math.random()*1.4-.2, y: Math.random()*1.4-.2,
+        vx: (Math.random()-.5)*.00014, vy: (Math.random()-.5)*.00014,
+        r: Math.random()*1.1+.3,
+    }));
+
+    function frame(){
+        cx.clearRect(0,0,W,H);
+
+        /* perspective grid */
+        const gy = H*.6, vxp = W*.5;
+        const ROWS=10, COLS=14;
+        for(let r=0;r<=ROWS;r++){
+            const prog=r/ROWS, py=gy+(H-gy)*prog;
+            const sp = W*.5*(prog*prog*.82+.06);
+            cx.beginPath(); cx.moveTo(vxp-sp,py); cx.lineTo(vxp+sp,py);
+            cx.strokeStyle=`rgba(232,0,29,${prog*.13})`; cx.lineWidth=.5; cx.stroke();
         }
-    }
+        for(let c=0;c<=COLS;c++){
+            const x0 = vxp + (c/COLS-.5)*W*.14;
+            const xN = vxp + (c/COLS-.5)*W*1.9;
+            cx.beginPath(); cx.moveTo(x0,gy); cx.lineTo(xN,H);
+            cx.strokeStyle='rgba(232,0,29,0.065)'; cx.lineWidth=.5; cx.stroke();
+        }
 
-    // --- 3. CURSOR & HOVER EFFECTS ---
-    const dot = document.getElementById('cursor-dot');
-    const reticle = document.getElementById('cursor-reticle');
-    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-    let reticleX = mouseX, reticleY = mouseY;
-
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX; mouseY = e.clientY;
-        dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
-    });
-
-    function animateCursor() {
-        reticleX += (mouseX - reticleX) * 0.15;
-        reticleY += (mouseY - reticleY) * 0.15;
-        reticle.style.left = reticleX + 'px'; reticle.style.top = reticleY + 'px';
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    document.querySelectorAll('a, .data-card').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            playBlip(400, 'sine', 0.05, 0.01); // Target acquisition sound
-            reticle.style.width = '60px'; reticle.style.height = '60px';
-            reticle.style.background = 'rgba(217, 4, 41, 0.1)';
-        });
-        el.addEventListener('mouseleave', () => {
-            reticle.style.width = '40px'; reticle.style.height = '40px';
-            reticle.style.background = 'transparent';
-        });
-    });
-
-    // --- 4. 3D KINETIC TILT ---
-    document.querySelectorAll('.tilt-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            let rect = card.getBoundingClientRect();
-            let rotateX = (((e.clientY - rect.top) - (rect.height / 2)) / (rect.height / 2)) * -8; 
-            let rotateY = (((e.clientX - rect.left) - (rect.width / 2)) / (rect.width / 2)) * 8;
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            card.style.transition = `transform 0.5s ease`;
-        });
-        card.addEventListener('mouseenter', () => card.style.transition = `none`);
-    });
-
-    // --- 5. CRYPTOGRAPHIC TEXT REVEAL ---
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    function scrambleText(element) {
-        let iterations = 0; const finalString = element.getAttribute('data-target');
-        const interval = setInterval(() => {
-            element.innerText = finalString.split('').map((char, index) => {
-                if(index < iterations) return finalString[index];
-                return letters[Math.floor(Math.random() * letters.length)];
-            }).join('');
-            if(iterations >= finalString.length) clearInterval(interval);
-            
-            // Soft clicking sound while decrypting
-            if(iterations % 2 === 0) playBlip(1000, 'square', 0.02, 0.005); 
-            
-            iterations += 1 / 3;
-        }, 30);
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
-                entry.target.classList.add('visible');
-                entry.target.querySelectorAll('.decrypt-text').forEach(el => scrambleText(el));
-            }
-        });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.section').forEach(section => observer.observe(section));
-
-    // --- 6. INTERACTIVE NETWORK MAP ---
-    const canvas = document.getElementById('network-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
-    const particles = [];
-    for (let i = 0; i < 70; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, radius: Math.random() * 2 });
-
-    function drawNetwork() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < particles.length; i++) {
-            let p = particles[i];
-            p.x += p.vx; p.y += p.vy;
-            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-            let dist = Math.sqrt(Math.pow(mouseX - p.x, 2) + Math.pow(mouseY - p.y, 2));
-            if (dist < 150) { p.x -= (mouseX - p.x) * 0.02; p.y -= (mouseY - p.y) * 0.02; }
-
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(217, 4, 41, 0.5)'; ctx.fill();
-
-            for (let j = i; j < particles.length; j++) {
-                let dist2 = Math.sqrt(Math.pow(p.x - particles[j].x, 2) + Math.pow(p.y - particles[j].y, 2));
-                if (dist2 < 120) {
-                    ctx.beginPath(); ctx.strokeStyle = `rgba(217, 4, 41, ${0.2 - dist2/600})`;
-                    ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+        /* particle web */
+        for(let i=0;i<N;i++){
+            const p=pts[i];
+            p.x+=p.vx; p.y+=p.vy;
+            if(p.x<-.2)p.x=1.2; if(p.x>1.2)p.x=-.2;
+            if(p.y<-.2)p.y=1.2; if(p.y>1.2)p.y=-.2;
+            const px=p.x*W, py2=p.y*H;
+            cx.beginPath(); cx.arc(px,py2,p.r,0,Math.PI*2);
+            cx.fillStyle='rgba(232,0,29,0.3)'; cx.fill();
+            for(let j=i+1;j<N;j++){
+                const q=pts[j], qx=q.x*W, qy=q.y*H;
+                const dx=px-qx, dy=py2-qy, d=Math.sqrt(dx*dx+dy*dy);
+                const md=W*.13;
+                if(d<md){
+                    cx.beginPath(); cx.moveTo(px,py2); cx.lineTo(qx,qy);
+                    cx.strokeStyle=`rgba(0,200,255,${(1-d/md)*.08})`; cx.lineWidth=.5; cx.stroke();
                 }
             }
         }
-        requestAnimationFrame(drawNetwork);
+        requestAnimationFrame(frame);
     }
-    drawNetwork();
-    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    frame();
+})();
 
+/* SCROLL REVEAL */
+const obs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); }), {threshold:.08});
+document.querySelectorAll('.sec').forEach(s => obs.observe(s));
 </script>
 </body>
 </html>
