@@ -1,0 +1,71 @@
+body {
+    background: #0d0d0d;
+    color: #00ff9f;
+    font-family: "Courier New", monospace;
+    margin: 0;
+}
+
+.container {
+    width: 85%;
+    margin: auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #00ff9f;
+}
+
+h2 {
+    border-bottom: 1px solid #00ff9f;
+    padding-bottom: 5px;
+}
+
+section {
+    margin: 50px 0;
+}
+
+.terminal {
+    border-left: 3px solid #00ff9f;
+    padding-left: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    border: 1px solid #00ff9f;
+    padding: 15px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    background: #001a12;
+    transform: scale(1.03);
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li::before {
+    content: "> ";
+}
+
+.cursor {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.coming {
+    color: #00ffaa;
+    font-size: 14px;
+}
