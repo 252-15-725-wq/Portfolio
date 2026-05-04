@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S. M. Maruf Hasan | Tactical Operator</title>
-    <!-- Sharp HUD Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #d90429; /* Blood Red */
+            --primary: #d90429; 
             --primary-glow: rgba(217, 4, 41, 0.5);
             --bg: #030303;
             --surface: rgba(12, 12, 14, 0.6);
@@ -21,57 +20,47 @@
         * { box-sizing: border-box; }
         
         body {
-            margin: 0;
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Fira Code', monospace;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            cursor: none; /* Hide default cursor for custom reticle */
+            margin: 0; background-color: var(--bg); color: var(--text-main);
+            font-family: 'Fira Code', monospace; overflow-x: hidden; scroll-behavior: smooth; cursor: none; 
         }
 
-        /* Custom Tactical Cursor */
+        /* Authorization Screen */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 100000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer;
+        }
+        .auth-btn {
+            color: var(--primary); font-family: 'Share Tech Mono'; font-size: 1.5rem;
+            letter-spacing: 3px; animation: pulse 1.5s infinite; text-shadow: 0 0 10px var(--primary);
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Tactical Cursor */
         .cursor-reticle {
-            position: fixed;
-            width: 40px; height: 40px;
-            border: 1px solid var(--primary);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 10000;
-            transition: width 0.2s, height 0.2s, background 0.2s;
-            box-shadow: 0 0 10px var(--primary-glow), inset 0 0 10px var(--primary-glow);
+            position: fixed; width: 40px; height: 40px; border: 1px solid var(--primary); border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 10000;
+            transition: width 0.2s, height 0.2s, background 0.2s; box-shadow: 0 0 10px var(--primary-glow), inset 0 0 10px var(--primary-glow);
         }
         .cursor-dot {
-            position: fixed;
-            width: 4px; height: 4px;
-            background: var(--primary);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 10000;
+            position: fixed; width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 10000;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--primary); }
 
-        /* Background Systems */
         body::before {
-            content: " "; display: block; position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(217, 4, 41, 0.03) 50%, rgba(0, 0, 0, 0.1) 50%);
             z-index: 1000; background-size: 100% 4px; pointer-events: none;
         }
         #network-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.4; }
 
-        /* Boot Screen */
         #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: var(--primary);
-            z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; color: var(--primary);
+            z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center;
         }
         .boot-logo { font-size: 3.5rem; margin-bottom: 20px; letter-spacing: 12px; font-family: 'Share Tech Mono'; text-shadow: 0 0 15px var(--primary); }
         .boot-bar { width: 400px; height: 2px; background: #222; margin-top: 20px; }
@@ -80,97 +69,75 @@
         #main-content { display: none; opacity: 0; transition: opacity 1.5s; }
         .container { max-width: 1100px; margin: auto; padding: 60px 20px; }
 
-        /* Typography */
         h1, h2, h3, .hud-title { font-family: 'Share Tech Mono', monospace; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
         .decrypt-text { display: inline-block; }
 
         .section { margin-bottom: 100px; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.1, 1, 0.3, 1); }
         .section.visible { opacity: 1; transform: translateY(0); }
 
-        /* Header Area */
         .header-box { border-left: 4px solid var(--primary); padding-left: 25px; margin-bottom: 40px; }
         .header-title { font-size: 4rem; color: #fff; text-shadow: 0 0 15px rgba(217, 4, 41, 0.4); letter-spacing: 5px; }
         .header-sub { color: var(--primary); font-size: 1.2rem; margin-top: 10px; letter-spacing: 3px; }
 
-        .objective-block {
-            border-left: 2px solid #444; background: rgba(255,255,255,0.02); padding: 20px 25px;
-            color: #aaa; font-size: 1.1rem; line-height: 1.7; margin-bottom: 50px;
-        }
+        .objective-block { border-left: 2px solid #444; background: rgba(255,255,255,0.02); padding: 20px 25px; color: #aaa; font-size: 1.1rem; line-height: 1.7; margin-bottom: 50px; }
 
-        /* 3D Data Grid */
         .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px; perspective: 1000px; }
         
         .data-card {
-            background: var(--surface);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border);
-            padding: 30px;
-            display: flex; flex-direction: column;
-            position: relative;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            transform-style: preserve-3d; /* Required for 3D tilt */
-            will-change: transform;
+            background: var(--surface); backdrop-filter: blur(8px); border: 1px solid var(--border); padding: 30px;
+            display: flex; flex-direction: column; position: relative; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d; will-change: transform;
         }
-        
         .data-card::before { content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 15px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
         .data-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
-
         .data-card:hover { border-color: #555; box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 20px rgba(217, 4, 41, 0.2); }
-        
-        /* Inner elements need translation to pop out in 3D */
         .data-card > * { transform: translateZ(30px); }
         
         .label { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 1px; }
         .value { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
         .sub-value { color: var(--primary); font-size: 0.9rem; }
 
-        /* Segment Header */
         .segment-header { font-size: 1.8rem; color: #fff; margin: 80px 0 40px 0; display: flex; align-items: center; }
         .segment-header::before { content: "///"; color: var(--primary); margin-right: 15px; letter-spacing: 2px; }
         .segment-header::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin-left: 20px; }
 
-        /* Lists & Links */
         ul { padding-left: 0; list-style: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-top: 15px;}
         li { margin-bottom: 12px; display: flex; align-items: flex-start; }
         li::before { content: "[]"; color: var(--primary); margin-right: 12px; font-family: 'Share Tech Mono'; }
         
-        a { color: var(--text-main); text-decoration: none; border-bottom: 1px solid var(--primary); padding-bottom: 2px; transition: 0.3s; }
+        a { color: var(--text-main); text-decoration: none; border-bottom: 1px solid var(--primary); padding-bottom: 2px; transition: 0.3s; cursor: none;}
         a:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
-
     </style>
 </head>
 <body>
 
-<!-- Custom Cursor -->
+<div id="auth-screen">
+    <div class="auth-btn">[ CLICK TO ESTABLISH UPLINK ]</div>
+</div>
+
 <div class="cursor-dot" id="cursor-dot"></div>
 <div class="cursor-reticle" id="cursor-reticle"></div>
 
-<!-- Boot Screen -->
 <div id="boot-screen">
     <div class="hud-title boot-logo">TACTICAL_SYS_V2</div>
-    <div style="font-family: 'Fira Code'; color: #666; font-size: 0.85rem;" id="boot-status">ESTABLISHING CONNECTION...</div>
+    <div style="font-family: 'Fira Code'; color: #666; font-size: 0.85rem;" id="boot-status">CONNECTING...</div>
     <div class="boot-bar"><div class="boot-progress" id="boot-progress"></div></div>
 </div>
 
-<!-- Interactive Network Canvas -->
 <canvas id="network-canvas"></canvas>
 
-<!-- Main Content -->
 <div id="main-content">
     <div class="container">
         
-        <!-- HEADER -->
         <div class="section visible">
             <div class="header-box">
                 <div class="header-title decrypt-text" data-target="S M MARUF HASAN">S M MARUF HASAN</div>
                 <div class="header-sub decrypt-text" data-target="OPERATOR // RED TEAM // REVERSE ENGINEER">OPERATOR // RED TEAM // REVERSE ENGINEER</div>
             </div>
-
             <div class="objective-block">
                 > Building a strong foundation in Ethical Hacking, Penetration Testing, and Binary Analysis.<br>
                 > Currently focused on understanding system internals to approach security from an offensive perspective.
             </div>
-            
             <div class="data-grid">
                 <div class="data-card tilt-card">
                     <span class="label">COMMAND RANK</span>
@@ -190,7 +157,6 @@
             </div>
         </div>
 
-        <!-- ACADEMICS & TRAINING -->
         <div class="section">
             <div class="segment-header decrypt-text" data-target="ACADEMIC_RECON">ACADEMIC_RECON</div>
             <div class="data-grid">
@@ -203,103 +169,69 @@
                     <span class="label">FOUNDATIONAL TRAINING</span>
                     <span class="value">Cybersecurity Basics</span>
                     <span class="sub-value">Hack To Live Academy</span>
-                    <ul>
-                        <li>Network Enumeration & Nmap</li>
-                        <li>Web Exploitation Fundamentals</li>
-                        <li>OSI/TCP-IP Architecture</li>
-                    </ul>
+                    <ul><li>Network Enumeration & Nmap</li><li>Web Exploitation Fundamentals</li><li>OSI/TCP-IP Architecture</li></ul>
                 </div>
             </div>
         </div>
 
-        <!-- CERTIFICATIONS -->
         <div class="section">
             <div class="segment-header decrypt-text" data-target="CERTIFICATION_LOG">CERTIFICATION_LOG</div>
             <div class="data-grid">
                 <div class="data-card tilt-card">
                     <span class="label">TCM SECURITY</span>
                     <span class="value">Systems & Code</span>
-                    <ul>
-                        <li>Linux 100: Fundamentals</li>
-                        <li>Programming 100: Fundamentals</li>
-                    </ul>
+                    <ul><li>Linux 100: Fundamentals</li><li>Programming 100: Fundamentals</li></ul>
                 </div>
                 <div class="data-card tilt-card">
                     <span class="label">INFRASTRUCTURE</span>
                     <span class="value">Networking & Scripts</span>
-                    <ul>
-                        <li>Intro to Cybersecurity (Cisco)</li>
-                        <li>PowerShell Regex (Udemy)</li>
-                    </ul>
+                    <ul><li>Intro to Cybersecurity (Cisco)</li><li>PowerShell Regex (Udemy)</li></ul>
                 </div>
                 <div class="data-card tilt-card">
                     <span class="label">PROFESSIONAL GROWTH</span>
                     <span class="value">Leadership & AI</span>
-                    <ul>
-                        <li>Campus to Success (LDA)</li>
-                        <li>MS Copilot Prompts (Microsoft)</li>
-                    </ul>
+                    <ul><li>Campus to Success (LDA)</li><li>MS Copilot Prompts (Microsoft)</li></ul>
                 </div>
             </div>
         </div>
 
-        <!-- REVERSE ENGINEERING -->
         <div class="section">
             <div class="segment-header decrypt-text" data-target="MODULE: REVERSE_ENGINEERING">MODULE: REVERSE_ENGINEERING</div>
             <div class="data-card tilt-card" style="width: 100%; border-left: 4px solid var(--primary);">
-                <p style="color:#ccc; font-size:1.1rem; margin-top:0; line-height:1.7; transform: translateZ(30px);">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level. This is a critical step toward advanced Red Teaming.</p>
-                
+                <p style="color:#ccc; font-size:1.1rem; margin-top:0; line-height:1.7; transform: translateZ(30px);">Actively learning Reverse Engineering to bridge the gap between running automated tools and understanding exactly how exploits work at the memory level.</p>
                 <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 20px; transform: translateZ(40px);">
                     <div style="flex: 1; min-width: 250px;">
                         <h3 style="color:var(--primary); font-size:1.2rem;">CURRENT FOCUS</h3>
-                        <ul>
-                            <li>Reading x86/x64 Assembly</li>
-                            <li>Hands-on with Debuggers (GDB)</li>
-                            <li>Memory Constraints & Overflows</li>
-                        </ul>
+                        <ul><li>Reading x86/x64 Assembly</li><li>Hands-on with Debuggers (GDB)</li><li>Memory Constraints & Overflows</li></ul>
                     </div>
                     <div style="flex: 1; min-width: 250px;">
                         <h3 style="color:var(--primary); font-size:1.2rem;">FAMILIAR ARSENAL</h3>
-                        <ul>
-                            <li>Ghidra / Radare2</li>
-                            <li>Metasploit Framework</li>
-                            <li>Burp Suite</li>
-                        </ul>
+                        <ul><li>Ghidra / Radare2</li><li>Metasploit Framework</li><li>Burp Suite</li></ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- OPERATIONS LOG -->
         <div class="section">
             <div class="segment-header decrypt-text" data-target="OPERATIONS_LOG">OPERATIONS_LOG</div>
-            
             <div class="data-grid" style="grid-template-columns: 1fr;">
                 <div class="data-card tilt-card" style="padding: 25px 40px;">
                     <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">Lead Executive</span>
-                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">PRESENT</span>
+                        <span class="value">Lead Executive</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">PRESENT</span>
                     </div>
                     <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cyber Security Club</span>
-                    <ul style="transform:translateZ(30px);">
-                        <li>Assisting in organizing CTF training and security awareness workshops.</li>
-                        <li>Collaborating to promote cybersecurity education on campus.</li>
-                    </ul>
+                    <ul style="transform:translateZ(30px);"><li>Assisting in organizing CTF training and security awareness workshops.</li><li>Collaborating to promote cybersecurity education on campus.</li></ul>
                 </div>
-
                 <div class="data-card tilt-card" style="padding: 25px 40px;">
                     <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">Volunteer Recognition</span>
-                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2025</span>
+                        <span class="value">Volunteer Recognition</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">2025</span>
                     </div>
                     <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">DIU Cybercon</span>
                     <p style="color:#aaa; margin:0; transform:translateZ(30px);">Officially recognized with a Certificate of Appreciation for providing logistical and technical session support for the National Capture The Flag and cyber conference.</p>
                 </div>
-
                 <div class="data-card tilt-card" style="padding: 25px 40px;">
                     <div style="display:flex; justify-content:space-between; width:100%; transform:translateZ(20px);">
-                        <span class="value">1st Runner-Up</span>
-                        <span style="color:var(--text-muted); font-family:'Share Tech Mono';">2024-2025</span>
+                        <span class="value">1st Runner-Up</span><span style="color:var(--text-muted); font-family:'Share Tech Mono';">2024-2025</span>
                     </div>
                     <span class="sub-value" style="margin-bottom:15px; display:block; transform:translateZ(25px);">Cyber Security Awareness CTF</span>
                     <p style="color:#aaa; margin:0; transform:translateZ(30px);">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
@@ -307,7 +239,6 @@
             </div>
         </div>
 
-        <!-- FOOTER LINKS -->
         <div class="section" style="text-align: center; margin-bottom: 0; padding-bottom: 40px;">
             <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;">
                 <a href="https://github.com/252-15-725-wq" target="_blank" style="font-family:'Share Tech Mono'; font-size:1.8rem; letter-spacing: 2px;">[ GITHUB ]</a>
@@ -322,173 +253,54 @@
 </div>
 
 <script>
-    // --- 1. TACTICAL MOUSE CURSOR ---
-    const dot = document.getElementById('cursor-dot');
-    const reticle = document.getElementById('cursor-reticle');
+    // --- 1. WEB AUDIO API (Synthesizing Sounds) ---
+    let audioCtx;
     
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let reticleX = mouseX;
-    let reticleY = mouseY;
+    function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        startAmbientDrone();
+    }
 
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        dot.style.left = mouseX + 'px';
-        dot.style.top = mouseY + 'px';
+    // Creates a deep background hum
+    function startAmbientDrone() {
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'sawtooth';
+        osc.frequency.value = 40; // Deep bass freq
+        filter.type = 'lowpass';
+        filter.frequency.value = 100; // Muffle the harshness
+        gain.gain.value = 0.03; // Very quiet background drone
+        
+        osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+        osc.start();
+    }
+
+    // Plays a short UI blip
+    function playBlip(freq = 600, type = 'square', duration = 0.05, vol = 0.01) {
+        if(!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // Auth Screen Click
+    document.getElementById('auth-screen').addEventListener('click', () => {
+        initAudio();
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('boot-screen').style.display = 'flex';
+        playBlip(300, 'square', 0.5, 0.05); // Power on sound
+        setTimeout(bootSystem, 500);
     });
 
-    // Smooth trailing animation for the reticle
-    function animateCursor() {
-        let dx = mouseX - reticleX;
-        let dy = mouseY - reticleY;
-        reticleX += dx * 0.15; // Speed of trailing
-        reticleY += dy * 0.15;
-        reticle.style.left = reticleX + 'px';
-        reticle.style.top = reticleY + 'px';
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    // Hover effect for links and cards
-    document.querySelectorAll('a, .data-card').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            reticle.style.width = '60px';
-            reticle.style.height = '60px';
-            reticle.style.background = 'rgba(217, 4, 41, 0.1)';
-        });
-        el.addEventListener('mouseleave', () => {
-            reticle.style.width = '40px';
-            reticle.style.height = '40px';
-            reticle.style.background = 'transparent';
-        });
-    });
-
-
-    // --- 2. 3D KINETIC TILT EFFECT ---
-    document.querySelectorAll('.tilt-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            let rect = card.getBoundingClientRect();
-            let x = e.clientX - rect.left; // x position within the element.
-            let y = e.clientY - rect.top;  // y position within the element.
-            
-            let centerX = rect.width / 2;
-            let centerY = rect.height / 2;
-            
-            let rotateX = ((y - centerY) / centerY) * -8; // Max rotation degrees
-            let rotateY = ((x - centerX) / centerX) * 8;
-
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            card.style.transition = `transform 0.5s ease`;
-        });
-        
-        card.addEventListener('mouseenter', () => {
-            card.style.transition = `none`; // Remove transition while moving for instant feel
-        });
-    });
-
-
-    // --- 3. CRYPTOGRAPHIC TEXT REVEAL ---
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    
-    function scrambleText(element) {
-        let iterations = 0;
-        const finalString = element.getAttribute('data-target');
-        
-        const interval = setInterval(() => {
-            element.innerText = finalString.split('').map((char, index) => {
-                if(index < iterations) return finalString[index];
-                return letters[Math.floor(Math.random() * letters.length)];
-            }).join('');
-            
-            if(iterations >= finalString.length) clearInterval(interval);
-            iterations += 1 / 3;
-        }, 30);
-    }
-
-
-    // --- 4. SCROLL OBSERVER (Triggers Scramble and Fade In) ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                if (!entry.target.classList.contains('visible')) {
-                    entry.target.classList.add('visible');
-                    // Find any text inside this section that needs decrypting
-                    const decryptElements = entry.target.querySelectorAll('.decrypt-text');
-                    decryptElements.forEach(el => scrambleText(el));
-                }
-            }
-        });
-    }, { threshold: 0.15 });
-
-    document.querySelectorAll('.section').forEach(section => observer.observe(section));
-
-
-    // --- 5. INTERACTIVE BACKGROUND CANVAS ---
-    const canvas = document.getElementById('network-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles = [];
-    for (let i = 0; i < 70; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            radius: Math.random() * 2
-        });
-    }
-
-    function drawNetwork() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        for (let i = 0; i < particles.length; i++) {
-            let p = particles[i];
-            p.x += p.vx; p.y += p.vy;
-            
-            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-            // Interactive Repulsion from mouse
-            let dx = mouseX - p.x;
-            let dy = mouseY - p.y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 150) {
-                p.x -= dx * 0.02;
-                p.y -= dy * 0.02;
-            }
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(217, 4, 41, 0.5)';
-            ctx.fill();
-
-            // Connect lines
-            for (let j = i; j < particles.length; j++) {
-                let p2 = particles[j];
-                let dist2 = Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2));
-                if (dist2 < 120) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `rgba(217, 4, 41, ${0.2 - dist2/600})`;
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.stroke();
-                }
-            }
-        }
-        requestAnimationFrame(drawNetwork);
-    }
-    drawNetwork();
-
-    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-
-    // --- 6. BOOT SEQUENCE ---
+    // --- 2. BOOT SEQUENCE ---
     const bootStatus = document.getElementById('boot-status');
     const bootProgress = document.getElementById('boot-progress');
     const statuses = [ "BYPASSING FIREWALLS...", "INJECTING PAYLOAD...", "DECRYPTING ASSETS...", "ACCESS GRANTED" ];
@@ -498,9 +310,11 @@
         if (step < statuses.length) {
             bootStatus.innerText = statuses[step];
             bootProgress.style.width = ((step + 1) / statuses.length) * 100 + "%";
+            playBlip(800 + (step*100), 'sawtooth', 0.1, 0.02); // Data processing sound
             step++;
-            setTimeout(bootSystem, 500 + Math.random() * 300);
+            setTimeout(bootSystem, 400 + Math.random() * 300);
         } else {
+            playBlip(1200, 'sine', 0.3, 0.03); // Success chime
             setTimeout(() => {
                 document.getElementById('boot-screen').style.opacity = '0';
                 setTimeout(() => {
@@ -511,9 +325,115 @@
             }, 400);
         }
     }
-    window.onload = bootSystem;
+
+    // --- 3. CURSOR & HOVER EFFECTS ---
+    const dot = document.getElementById('cursor-dot');
+    const reticle = document.getElementById('cursor-reticle');
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let reticleX = mouseX, reticleY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+    });
+
+    function animateCursor() {
+        reticleX += (mouseX - reticleX) * 0.15;
+        reticleY += (mouseY - reticleY) * 0.15;
+        reticle.style.left = reticleX + 'px'; reticle.style.top = reticleY + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, .data-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            playBlip(400, 'sine', 0.05, 0.01); // Target acquisition sound
+            reticle.style.width = '60px'; reticle.style.height = '60px';
+            reticle.style.background = 'rgba(217, 4, 41, 0.1)';
+        });
+        el.addEventListener('mouseleave', () => {
+            reticle.style.width = '40px'; reticle.style.height = '40px';
+            reticle.style.background = 'transparent';
+        });
+    });
+
+    // --- 4. 3D KINETIC TILT ---
+    document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            let rect = card.getBoundingClientRect();
+            let rotateX = (((e.clientY - rect.top) - (rect.height / 2)) / (rect.height / 2)) * -8; 
+            let rotateY = (((e.clientX - rect.left) - (rect.width / 2)) / (rect.width / 2)) * 8;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            card.style.transition = `transform 0.5s ease`;
+        });
+        card.addEventListener('mouseenter', () => card.style.transition = `none`);
+    });
+
+    // --- 5. CRYPTOGRAPHIC TEXT REVEAL ---
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+    function scrambleText(element) {
+        let iterations = 0; const finalString = element.getAttribute('data-target');
+        const interval = setInterval(() => {
+            element.innerText = finalString.split('').map((char, index) => {
+                if(index < iterations) return finalString[index];
+                return letters[Math.floor(Math.random() * letters.length)];
+            }).join('');
+            if(iterations >= finalString.length) clearInterval(interval);
+            
+            // Soft clicking sound while decrypting
+            if(iterations % 2 === 0) playBlip(1000, 'square', 0.02, 0.005); 
+            
+            iterations += 1 / 3;
+        }, 30);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+                entry.target.classList.add('visible');
+                entry.target.querySelectorAll('.decrypt-text').forEach(el => scrambleText(el));
+            }
+        });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.section').forEach(section => observer.observe(section));
+
+    // --- 6. INTERACTIVE NETWORK MAP ---
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+    const particles = [];
+    for (let i = 0; i < 70; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, radius: Math.random() * 2 });
+
+    function drawNetwork() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            let dist = Math.sqrt(Math.pow(mouseX - p.x, 2) + Math.pow(mouseY - p.y, 2));
+            if (dist < 150) { p.x -= (mouseX - p.x) * 0.02; p.y -= (mouseY - p.y) * 0.02; }
+
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(217, 4, 41, 0.5)'; ctx.fill();
+
+            for (let j = i; j < particles.length; j++) {
+                let dist2 = Math.sqrt(Math.pow(p.x - particles[j].x, 2) + Math.pow(p.y - particles[j].y, 2));
+                if (dist2 < 120) {
+                    ctx.beginPath(); ctx.strokeStyle = `rgba(217, 4, 41, ${0.2 - dist2/600})`;
+                    ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(drawNetwork);
+    }
+    drawNetwork();
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
 </script>
-
 </body>
 </html>
