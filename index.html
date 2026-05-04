@@ -3,104 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S. M. Maruf Hasan | Security Researcher</title>
+    <title>S. M. Maruf Hasan | Red Team Operator</title>
     <style>
-        /* Base Terminal Styling */
-        body {
-            margin: 0;
-            background: #0a0a0a;
-            color: #00ff9f;
-            font-family: 'Courier New', monospace;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        :root {
+            --primary: #ff003c; /* Aggressive Red for Red Teaming */
+            --bg: #050505;
+            --text: #e0e0e0;
+            --terminal-bg: rgba(10, 10, 10, 0.95);
         }
 
-        /* Scanline CRT Effect */
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', 'Courier New', monospace;
+            overflow-x: hidden;
+        }
+
+        /* Red Scanline Overlay */
         body::before {
             content: " ";
             display: block;
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
+            background: linear-gradient(rgba(255, 0, 60, 0.05) 50%, rgba(0, 0, 0, 0.1) 50%);
+            z-index: 100;
+            background-size: 100% 4px;
             pointer-events: none;
         }
 
         #matrix {
             position: fixed;
             top: 0; left: 0; z-index: -1;
-            opacity: 0.3;
+            opacity: 0.15;
         }
 
-        /* Dashboard Grid Layout */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
-            padding: 20px;
-            max-width: 1200px;
+        .container {
+            max-width: 1000px;
             margin: auto;
+            padding: 40px 20px;
         }
 
-        .terminal-window {
+        /* Top Header Area */
+        .header-console {
+            border: 1px solid var(--primary);
+            background: var(--terminal-bg);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.2);
+            position: relative;
+        }
+
+        .role-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            position: absolute;
+            top: -12px;
+            left: 20px;
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 2.2rem; letter-spacing: 3px; }
+        .typing-container { font-size: 1.1rem; margin-top: 10px; color: #888; }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .box {
             border: 1px solid #333;
-            background: rgba(5, 5, 5, 0.9);
-            box-shadow: 0 0 15px rgba(0, 255, 159, 0.1);
-            display: flex;
-            flex-direction: column;
+            background: var(--terminal-bg);
+            padding: 20px;
+            position: relative;
         }
 
-        /* Window Top Bar */
-        .window-header {
-            background: #1a1a1a;
-            padding: 5px 10px;
+        .box-title {
+            color: var(--primary);
+            font-size: 0.9rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            border-bottom: 1px solid #333;
-            color: #888;
         }
 
-        .window-content {
-            padding: 15px;
-            line-height: 1.5;
+        /* Skills/Tools List */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag {
+            border: 1px solid var(--primary);
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            color: var(--primary);
         }
 
-        /* Branding / Header */
-        header {
-            padding: 40px 20px 10px 20px;
-            text-align: center;
-        }
+        /* Experience Section */
+        .exp-item { margin-bottom: 15px; }
+        .exp-title { color: #fff; font-weight: bold; }
+        .exp-org { color: var(--primary); font-size: 0.9rem; }
 
-        h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; }
-        .glitch { position: relative; color: #00ff9f; }
-
-        /* Custom UI Elements */
-        .status-bar {
-            background: #00ff9f;
-            color: #000;
-            padding: 2px 8px;
-            font-weight: bold;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .cmd { color: #ff0055; margin-right: 5px; }
-        .path { color: #00aaff; }
-
-        pre { margin: 0; white-space: pre-wrap; font-size: 13px; }
-
-        /* Animations */
-        .cursor { animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
 
         @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -108,86 +118,73 @@
 
 <canvas id="matrix"></canvas>
 
-<header>
-    <h1 class="glitch">S M MARUF HASAN</h1>
-    <p>> <span id="typing"></span><span class="cursor">█</span></p>
-</header>
-
-<div class="dashboard">
-
-    <!-- About Window -->
-    <div class="terminal-window">
-        <div class="window-header"><span>whoami.exe</span><span>✕ ▭ </span></div>
-        <div class="window-content">
-            <div class="status-bar">RANK: 1st Runner Up (CSAD CTF)</div>
-            <p>Computer Science student at DIU. Passionate about Red Teaming, Web Exploitation, and Hardware Internals.</p>
-            <p><span class="cmd">#</span> current_focus: OSCP Preparation</p>
+<div class="container">
+    
+    <header class="header-console">
+        <div class="role-badge">OPERATOR ID: 252-15-725</div>
+        <h1>S M MARUF HASAN</h1>
+        <div class="typing-container">
+            <span id="typing"></span><span style="animation: blink 1s infinite">_</span>
         </div>
-    </div>
+    </header>
 
-    <!-- Skills Window -->
-    <div class="terminal-window">
-        <div class="window-header"><span>system_info --skills</span><span>✕ ▭ </span></div>
-        <div class="window-content">
-            <pre>
-[OS]      Kali Linux, Parrot
-[TOOLS]   Nmap, Burp Suite, Metasploit
-[LANGS]   C, Python, Assembly
-[FIELDS]  Reverse Engineering, Blockchain
-            </pre>
+    <div class="grid">
+        <!-- Main Objective -->
+        <div class="box">
+            <div class="box-title"><span>> WHOAMI</span><span>[0x99]</span></div>
+            <div class="exp-item">
+                <div class="exp-title">Lead Executive</div>
+                <div class="exp-org">DIU Cyber Security Club</div>
+                <p style="font-size: 0.9rem; color: #bbb;">Directing offensive security workshops, CTF training modules, and club operations for the next generation of security researchers at Daffodil International University.</p>
+            </div>
+            <p>Specializing in **Red Team Operations**, infrastructure compromise, and post-exploitation. My goal is to simulate advanced adversaries to strengthen organizational defense.</p>
         </div>
-    </div>
 
-    <!-- Projects Window -->
-    <div class="terminal-window">
-        <div class="window-header"><span>ls -la /home/projects</span><span>✕ ▭ </span></div>
-        <div class="window-content">
-            <p><span class="path">drwxr-xr-x</span> <span class="cmd">SHUROKKHA</span> (Blockchain Safety)</p>
-            <p><span class="path">drwxr-xr-x</span> Visual_Aid_System</p>
-            <p><span class="path">-rw-r--r--</span> Student_Manager.py</p>
+        <!-- Arsenal -->
+        <div class="box">
+            <div class="box-title"><span>> ARSENAL</span><span>[TOOLS]</span></div>
+            <div class="tags">
+                <div class="tag">Nmap</div>
+                <div class="tag">Metasploit</div>
+                <div class="tag">Kali Linux</div>
+                <div class="tag">Burp Suite</div>
+                <div class="tag">Netcat</div>
+                <div class="tag">Cobalt Strike (Learning)</div>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #666;">
+                Focused on: Web Exploitation, Binary Analysis, and Networking.
+            </p>
         </div>
-    </div>
 
-    <!-- Live System Window -->
-    <div class="terminal-window">
-        <div class="window-header"><span>system_monitor</span><span>✕ ▭ </span></div>
-        <div class="window-content">
-            <p id="stats">CPU: 0.0% | RAM: 1024MB / 16384MB</p>
-            <p>Connection: <span style="color: #00ff9f;">SECURE</span></p>
-            <p>Location: Dhaka, BD</p>
+        <!-- Certs/Awards -->
+        <div class="box">
+            <div class="box-title"><span>> ACHIEVEMENTS</span><span>[LOG]</span></div>
+            <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                <li>🚩 1st Runner Up - CSAD CTF</li>
+                <li>🚩 2nd Place - CTF Competition (Jan 2026)</li>
+                <li>🎓 ISC2 Candidate Member</li>
+            </ul>
         </div>
-    </div>
 
-    <!-- Contact Window -->
-    <div class="terminal-window" style="grid-column: span 1;">
-        <div class="window-header"><span>connect.sh</span><span>✕ ▭ </span></div>
-        <div class="window-content">
-            <p>> GitHub: <a href="https://github.com/252-15-725-wq" style="color:white; text-decoration: none;">/252-15-725-wq</a></p>
-            <p>> Email: <span style="color:white;">sardermarufhasan@gmail.com</span></p>
+        <!-- Connection -->
+        <div class="box">
+            <div class="box-title"><span>> ENCRYPTED_CONTACT</span></div>
+            <p style="font-size: 0.9rem;">
+                MAIL: sardermarufhasan@gmail.com<br>
+                GIT: <a href="https://github.com/252-15-725-wq">/252-15-725-wq</a>
+            </p>
         </div>
     </div>
 
 </div>
 
 <script>
-    // Typing Effect
-    const text = "Cybersecurity Researcher | Reverse Engineer | CTF Player";
-    let i = 0;
-    function typing() {
-        if (i < text.length) {
-            document.getElementById("typing").innerHTML += text.charAt(i);
-            i++;
-            setTimeout(typing, 60);
-        }
-    }
-    typing();
-
-    // Matrix Rain
+    // Red Matrix Effect
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
-    const letters = "0101100101ABCDEF";
+    const letters = "01SECUREBREACHERROR725KALI";
     const fontSize = 14;
     const columns = canvas.width / fontSize;
     const drops = [];
@@ -196,7 +193,7 @@
     function draw() {
         ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00ff9f";
+        ctx.fillStyle = "#ff003c";
         ctx.font = fontSize + "px monospace";
         for (let i = 0; i < drops.length; i++) {
             const text = letters.charAt(Math.floor(Math.random() * letters.length));
@@ -205,15 +202,42 @@
             drops[i]++;
         }
     }
-    setInterval(draw, 35);
+    setInterval(draw, 40);
 
-    // Live Stats Simulation
-    function updateStats() {
-        const cpu = (Math.random() * 10 + 2).toFixed(1);
-        const ram = (Math.random() * 100 + 2048).toFixed(0);
-        document.getElementById("stats").innerHTML = `CPU: ${cpu}% | RAM: ${ram}MB / 16384MB`;
+    // Typing Effect
+    const textArr = ["RED TEAM OPERATOR", "PENETRATION TESTER", "LEAD EXECUTIVE @ DIU CSC"];
+    let count = 0;
+    let txtI = 0;
+    let currentText = "";
+    let isDeleting = false;
+
+    function type() {
+        const fullTxt = textArr[count % textArr.length];
+        if (isDeleting) {
+            currentText = fullTxt.substring(0, currentText.length - 1);
+        } else {
+            currentText = fullTxt.substring(0, currentText.length + 1);
+        }
+        document.getElementById("typing").innerHTML = currentText;
+
+        let typeSpeed = 100;
+        if (isDeleting) typeSpeed /= 2;
+        if (!isDeleting && currentText === fullTxt) {
+            typeSpeed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && currentText === "") {
+            isDeleting = false;
+            count++;
+            typeSpeed = 500;
+        }
+        setTimeout(type, typeSpeed);
     }
-    setInterval(updateStats, 3000);
+    type();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 </script>
 
 </body>
