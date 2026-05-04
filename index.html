@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S. M. Maruf Hasan | Red Team Operator</title>
+    <title>S. M. Maruf Hasan | Red Team Focus</title>
     <style>
         :root {
             --primary: #ff003c;
             --bg: #050505;
             --text: #e0e0e0;
-            --card-bg: rgba(15, 15, 15, 0.95);
+            --card-bg: rgba(10, 10, 10, 0.85);
             --border: #333;
         }
 
@@ -18,24 +18,24 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: 'Fira Code', monospace;
+            font-family: 'Fira Code', 'Courier New', monospace;
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* Red CRT Overlay */
+        /* Scanline CRT Overlay */
         body::before {
             content: " ";
             display: block;
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(255, 0, 60, 0.03) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background: linear-gradient(rgba(255, 0, 60, 0.04) 50%, rgba(0, 0, 0, 0.1) 50%);
             z-index: 1000;
             background-size: 100% 4px;
             pointer-events: none;
         }
 
-        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; }
+        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
 
         .section {
             min-height: 100vh;
@@ -43,37 +43,117 @@
             flex-direction: column;
             justify-content: center;
             padding: 80px 20px;
-            max-width: 1100px;
+            max-width: 1000px;
             margin: auto;
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
         }
 
         .section.visible { opacity: 1; transform: translateY(0); }
 
-        .hero h1 { font-size: 3.5rem; color: var(--primary); margin: 0; letter-spacing: 5px; text-align: center; }
-        .summary { border-left: 3px solid var(--primary); padding-left: 20px; margin: 40px 0; font-size: 1.1rem; color: #bbb; line-height: 1.6; }
+        /* Hacker Vibe Typography */
+        .prompt { color: #555; margin-right: 10px; }
+        .cmd { color: var(--primary); }
+        
+        .hero h1 { 
+            font-size: 3.5rem; 
+            color: var(--primary); 
+            margin: 0; 
+            letter-spacing: 4px; 
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 60, 0.5);
+        }
+        
+        .summary { 
+            border-left: 2px solid var(--primary); 
+            padding-left: 20px; 
+            margin: 40px 0; 
+            font-size: 1.1rem; 
+            color: #ccc; 
+            line-height: 1.6; 
+            background: rgba(255, 0, 60, 0.02);
+            padding: 15px 20px;
+        }
 
-        .segment-title { color: var(--primary); font-size: 1.8rem; margin-bottom: 30px; display: flex; align-items: center; }
+        .segment-title { 
+            font-size: 1.4rem; 
+            margin-bottom: 30px; 
+            display: flex; 
+            align-items: center; 
+            color: #fff;
+        }
         .segment-title::after { content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 20px; }
 
+        /* Dashboard Cards */
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; position: relative; transition: 0.3s; }
-        .card:hover { border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 0, 60, 0.1); }
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            padding: 20px; 
+            position: relative; 
+            transition: 0.2s; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .card:hover { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 0, 60, 0.15); }
 
-        .badge { background: var(--primary); color: black; padding: 2px 8px; font-weight: bold; font-size: 0.75rem; position: absolute; top: -10px; right: 20px; }
+        .badge { 
+            background: var(--primary); 
+            color: black; 
+            padding: 2px 8px; 
+            font-weight: bold; 
+            font-size: 0.75rem; 
+            position: absolute; 
+            top: -10px; 
+            right: 20px; 
+        }
 
-        .timeline { border-left: 2px solid var(--primary); margin-left: 20px; padding-left: 30px; }
+        /* Timeline Items */
+        .timeline { border-left: 1px dashed var(--primary); margin-left: 10px; padding-left: 30px; }
         .timeline-item { margin-bottom: 40px; position: relative; }
-        .timeline-item::before { content: ""; position: absolute; left: -41px; top: 8px; width: 20px; height: 20px; background: var(--bg); border: 2px solid var(--primary); border-radius: 50%; }
+        .timeline-item::before { 
+            content: ">"; 
+            position: absolute; 
+            left: -39px; 
+            top: 2px; 
+            color: var(--primary);
+            background: var(--bg);
+            font-weight: bold;
+        }
 
-        ul { padding-left: 20px; color: #aaa; list-style-type: square; }
+        ul { padding-left: 20px; color: #aaa; list-style-type: none; }
+        li::before { content: "- "; color: var(--primary); }
         li { margin-bottom: 8px; }
-        a { color: var(--primary); text-decoration: none; transition: 0.3s; }
-        a:hover { color: #fff; text-shadow: 0 0 5px var(--primary); }
+        
+        a { color: var(--primary); text-decoration: none; transition: 0.2s; }
+        a:hover { color: #fff; text-shadow: 0 0 8px var(--primary); }
 
-        .re-highlight { background: rgba(255, 0, 60, 0.05); border: 1px solid var(--primary); padding: 20px; margin-top: 20px; }
+        /* Glitch Effect */
+        .glitch { position: relative; display: inline-block; }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+        }
+        .glitch::before {
+            left: 2px; text-shadow: -2px 0 #00ffea;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px; text-shadow: -2px 0 var(--primary);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 31px, 0); }
+            20% { clip: rect(65px, 9999px, 15px, 0); }
+            40% { clip: rect(43px, 9999px, 86px, 0); }
+            60% { clip: rect(12px, 9999px, 64px, 0); }
+            80% { clip: rect(87px, 9999px, 23px, 0); }
+            100% { clip: rect(32px, 9999px, 54px, 0); }
+        }
     </style>
 </head>
 <body>
@@ -83,33 +163,39 @@
 <!-- SECTION 1: HEADER & IDENTITY -->
 <section class="section visible">
     <div class="hero">
-        <h1>S M MARUF HASAN</h1>
-        <p style="color:var(--primary); text-align:center; letter-spacing: 2px;">RED TEAM OPERATOR // REVERSE ENGINEER IN TRAINING</p>
+        <h1 class="glitch" data-text="S M MARUF HASAN">S M MARUF HASAN</h1>
+        <p style="color:#888; text-align:center; letter-spacing: 2px; margin-top:15px;">
+            <span class="cmd">Target:</span> Red Team Operations
+        </p>
     </div>
     <div class="summary">
+        <span class="prompt">root@system:~#</span> whoami<br><br>
         > Computer Science Student @ Daffodil International University.<br>
         > Lead Executive @ DIU Cyber Security Club.<br>
-        > Specialized in Ethical Hacking, Penetration Testing, and Binary Analysis.
+        > Building a strong foundation in Ethical Hacking, Penetration Testing, and Binary Analysis.<br>
+        > Currently focused on understanding system internals to approach security from an offensive perspective.
     </div>
 </section>
 
 <!-- SECTION 2: ACADEMIC_RECON -->
 <section class="section">
-    <div class="segment-title">ACADEMIC_RECON</div>
+    <div class="segment-title">
+        <span class="prompt">root@system:~#</span> ls -la /academic_recon
+    </div>
     <div class="card-grid">
         <div class="card">
             <div class="badge">B.Sc. CSE</div>
             <h3>Daffodil International University</h3>
-            <p>Focusing on information security, network reconnaissance, and Linux environments[cite: 1]. Expected graduation: 2029[cite: 1].</p>
+            <p>Undergraduate student focusing on core computer science concepts and information security. Expected graduation: 2029.</p>
         </div>
         <div class="card">
             <div class="badge">TRAINING</div>
             <h3>Cybersecurity Fundamentals</h3>
-            <p>Hack To Live Academy (2024-2025)[cite: 1]</p>
+            <p>Hack To Live Academy (2024-2025)</p>
             <ul>
-                <li>Network Enumeration with Nmap[cite: 1]</li>
-                <li>Web Exploitation & Burp Suite[cite: 1]</li>
-                <li>OSI/TCP-IP Networking Models[cite: 1]</li>
+                <li>Network Enumeration & Nmap</li>
+                <li>Web Exploitation Fundamentals</li>
+                <li>OSI/TCP-IP & Linux Environments</li>
             </ul>
         </div>
     </div>
@@ -117,25 +203,27 @@
 
 <!-- SECTION 3: REVERSE_ENGINEERING_OBJECTIVE -->
 <section class="section">
-    <div class="segment-title">REVERSE_ENGINEERING_LAB</div>
-    <div class="re-highlight">
-        <h3 style="color:var(--primary)">[STATUS: ACTIVE_LEARNING]</h3>
-        <p>I am currently focusing on **Reverse Engineering** to evolve from a security enthusiast into a professional Red Team Operator. This technical foundation allows for deep-level exploit development and infrastructure compromise.</p>
+    <div class="segment-title">
+        <span class="prompt">root@system:~#</span> cat /learning_path/reverse_engineering.txt
+    </div>
+    <div class="card" style="width: 100%; border-left: 3px solid var(--primary);">
+        <h3 style="color:var(--primary); margin-top:0;">[STATUS: GAINING PROFICIENCY]</h3>
+        <p>Actively learning Reverse Engineering to bridge the gap between running tools and understanding exactly how exploits work at the memory level. This is a critical step in my journey toward Red Teaming.</p>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
             <div>
-                <h4 style="color:var(--primary)">Current Focus:</h4>
+                <h4 style="color:#aaa">Current Focus Areas:</h4>
                 <ul>
-                    <li>x86/x64 Assembly Language</li>
-                    <li>Binary Analysis & Debugging (GDB)</li>
-                    <li>Memory Corruption & Logic Bypassing</li>
+                    <li>Reading x86/x64 Assembly</li>
+                    <li>Hands-on with Debuggers (GDB)</li>
+                    <li>Understanding Memory Constraints</li>
                 </ul>
             </div>
             <div>
-                <h4 style="color:var(--primary)">Technical Goals:</h4>
+                <h4 style="color:#aaa">Familiar Tools:</h4>
                 <ul>
-                    <li>Bypassing EDR/AV Systems</li>
-                    <li>Custom Malware Development</li>
-                    <li>Vulnerability Research</li>
+                    <li>Ghidra / Radare2</li>
+                    <li>Metasploit & Nmap</li>
+                    <li>Burp Suite</li>
                 </ul>
             </div>
         </div>
@@ -144,38 +232,45 @@
 
 <!-- SECTION 4: OPERATION_LOG -->
 <section class="section">
-    <div class="segment-title">OPERATION_LOG</div>
+    <div class="segment-title">
+        <span class="prompt">root@system:~#</span> tail -f /var/log/operations.log
+    </div>
     <div class="timeline">
         <div class="timeline-item">
-            <h3>Lead Executive - Cyber Security Club</h3>
-            <p style="color:var(--primary)">Daffodil International University[cite: 1]</p>
+            <h3 style="margin-top:0;">Lead Executive - Cyber Security Club</h3>
+            <p style="color:var(--primary)">Daffodil International University (Present)</p>
             <ul>
-                <li>Directing CTF training modules and offensive security workshops[cite: 1].</li>
-                <li>Promoting cybersecurity education and coordination across departments[cite: 1].</li>
+                <li>Assisting in organizing CTF training and security awareness workshops.</li>
+                <li>Collaborating to promote cybersecurity education on campus.</li>
             </ul>
         </div>
         <div class="timeline-item">
-            <h3>1st Runner-Up - CTF Competition</h3>
-            <p>Cyber Security Awareness Event (2024-2025)[cite: 1]</p>
-            <p>Secured 2nd place among university teams focusing on web exploitation and forensics[cite: 1].</p>
+            <h3 style="margin-top:0;">1st Runner-Up - CTF Competition</h3>
+            <p>Cyber Security Awareness Event (2024-2025)</p>
+            <p style="color:#aaa; font-size:0.9rem;">Competed alongside university teams in a multi-category Capture The Flag event, securing 2nd place overall.</p>
         </div>
         <div class="timeline-item">
-            <h3>Volunteer - DIU Cybercon 2025</h3>
-            <p>Assisted in event logistics, coordination, and technical session support[cite: 1].</p>
+            <h3 style="margin-top:0;">Volunteer - DIU Cybercon 2025</h3>
+            <p style="color:#aaa; font-size:0.9rem;">Provided logistical and technical session support for the university-level cyber conference.</p>
         </div>
     </div>
 </section>
 
 <!-- SECTION 5: ESTABLISH_UPLINK -->
 <section class="section" style="text-align:center; min-height: 40vh;">
-    <div class="segment-title">ESTABLISH_UPLINK</div>
-    <p>Dhaka, Bangladesh[cite: 1]</p>
-    <p>Email: <a href="mailto:sardermarufhasan@gmail.com">sardermarufhasan@gmail.com</a>[cite: 1]</p>
-    <p style="font-size: 1.2rem; margin-top: 20px;">
-        <a href="https://github.com/252-15-725-wq" target="_blank">GITHUB</a> | 
-        <a href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank">LINKEDIN</a>[cite: 1]
+    <div class="segment-title" style="justify-content:center;">
+        <span class="prompt">root@system:~#</span> ./establish_connection.sh
+    </div>
+    <p style="color:#888;">Location: Dhaka, Bangladesh</p>
+    <p>Secure Comm: <a href="mailto:sardermarufhasan@gmail.com">sardermarufhasan@gmail.com</a></p>
+    <p style="font-size: 1.2rem; margin-top: 25px;">
+        <a href="https://github.com/252-15-725-wq" target="_blank">[ GITHUB ]</a> &nbsp;&nbsp;|&nbsp;&nbsp; 
+        <a href="https://www.linkedin.com/in/sm-marufhasan/" target="_blank">[ LINKEDIN ]</a>
     </p>
-    <div style="margin-top: 50px; font-size: 0.7rem; color: #444;">OPERATOR_ID: 252-15-725 // CSE @ DIU</div>
+    <div style="margin-top: 60px; font-size: 0.75rem; color: #333;">
+        OPERATOR_ID: 252-15-725<br>
+        SYSTEM_STATUS: ONLINE
+    </div>
 </section>
 
 <script>
